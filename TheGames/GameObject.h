@@ -21,7 +21,7 @@ public:
 	GLboolean   Destroyed;
 	// Render state
 
-	// Constructor(s)
+	// Constructor(s)s
 	GameObject();
 
 };
