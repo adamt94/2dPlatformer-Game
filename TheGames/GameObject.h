@@ -11,19 +11,25 @@ using namespace std;
 // Container object for holding all state relevant for a single
 // game object entity. Each object in the game likely needs the
 // minimal of state as described within GameObject.
-class GameObject
+class GameObject 
 {
 public:
 	// Object state
 
-	GLfloat     Rotation;
+
 	GLboolean   IsSolid;
 	GLboolean   Destroyed;
+	GLint		Height;
+	GLint		Width;
+	GLfloat     Xpos;
+	GLfloat		Ypos;
+
 	// Render state
 
-	// Constructor(s)s
-	GameObject();
-
+	// Constructor(s)
+	GameObject(GLboolean isSolid, GLboolean destroyed, GLint height, GLint width, GLfloat xpos, GLfloat ypos);
+	void Collision();
+	
 };
 
 #endif

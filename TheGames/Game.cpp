@@ -4,8 +4,8 @@
 #include "Game.h"
 #include "Character.h"
 using namespace std;
-Character Player(100.0f,-100.0f,500,300,0.0f,200.0f);
-
+Character Player = Character(true,true,100.0f,-100.0f,500,300);
+const GLfloat resistance = 02.0f;
 Game::Game(GLuint width, GLuint height)
 : State(GAME_ACTIVE), Keys(), Width(width), Height(height)
 {
@@ -21,29 +21,46 @@ void Game::ProcessInput(GLfloat dt){
 		if (this->Keys[GLFW_KEY_W])//up
 		{
 			
-			Player.Ypos += Player.yVelocity*dt;
+			Player.Up();
 			
 		}
 		if (this->Keys[GLFW_KEY_S])//down
 		{
-			Player.Ypos += -Player.yVelocity*dt;
+			Player.Down();
 		}
 		if (this->Keys[GLFW_KEY_D])//right
 		{
 			
-			Player.Xpos += Player.xVelocity*dt;
+			
+			Player.Right();
 		
 		}
 		if (this->Keys[GLFW_KEY_A])//left
 		{
 			
-			Player.Xpos += Player.xVelocity*dt;
+			Player.Left();
 		}
 		
 		
 	}
 }
 void Game::Update(GLfloat dt){
+	//adds resistance to slow character down
+	if(Player.xVelocity>0){
+		Player.xVelocity -= resistance;
+	}
+	if(Player.xVelocity<0){
+		Player.xVelocity += resistance;
+	}
+	if(Player.yVelocity>0){
+		Player.yVelocity -= resistance;
+	}
+	if(Player.yVelocity<0){
+		Player.yVelocity += resistance;
+	}
+	//update player position
+	Player.Xpos += Player.xVelocity*dt;
+	Player.Ypos += Player.yVelocity*dt;
 	
 	
 
@@ -55,7 +72,7 @@ void Game::Render(){
 		glLoadIdentity();
 		//draw the objects to screen
 		Player.draw();
-		Player.movement();
+		
 		glFlush();
 		
 	}

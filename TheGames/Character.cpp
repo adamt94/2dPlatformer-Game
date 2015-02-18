@@ -1,25 +1,20 @@
 #include "stdafx.h"
 #include <iostream>
-#include <Windows.h>
-#include <GLFW/glfw3.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <gl/glu.h>
-#include <gl/GL.h>
+
+
 #include "Character.h"
 using namespace std;
 
-GLfloat Height, Width, Xpos, Ypos, xVelocity, yVelocity;
-const GLfloat friction = 0.57;
-const GLfloat maxSpeed = 350.0f;
-Character::Character(GLfloat height, GLfloat width, GLfloat xpos, GLfloat ypos, GLfloat xVel, GLfloat yVel)
+
+
+
+Character::Character(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint width, GLfloat xpos, GLfloat ypos)
+	:GameObject(IsSolid, Destroyed, height, width, xpos, ypos)
 {
-	Height = height;
-	Width = width;
-	Xpos = xpos;
-	Ypos = ypos;
-	xVelocity = xVel;
-	yVelocity = yVel;
+	
+	xVelocity = 0.0f; 
+	yVelocity = 0.0f;
+	
 }
 void Character::draw(){
 	glPushMatrix();
@@ -34,8 +29,36 @@ void Character::draw(){
 	glPopMatrix();
 	
 }
-void Character::movement(){
-	//slow down if player has let got of movement key
+void Character::Up(){
+	//increases speed until max
+	if(yVelocity<maxSpeed)
+	{
+	  yVelocity+=5.0f;
+	}
 	
+}
+void Character::Down(){
+	//increases speed until max
+	if(yVelocity>(-maxSpeed))
+	{
+	  yVelocity-=5.0f;
+	}
+	
+	
+}
+void Character::Right(){
+	//increases speed until max
+	if(xVelocity<maxSpeed)
+	{
+	  xVelocity+=5.0f;
+	}
+	
+}
+void Character::Left(){
+	//increases speed until max
+	if(xVelocity>(-maxSpeed))
+	{
+	  xVelocity-=5.0f;
+	}
 	
 }

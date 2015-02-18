@@ -1,11 +1,14 @@
 #include <GLFW/glfw3.h>
-
-class Character{
+#include "GameObject.h"
+const GLfloat  maxSpeed = 400.0f;
+class Character : public GameObject{
 public:
-	GLfloat Height, Width, Xpos, Ypos,xVelocity,yVelocity;
+	GLfloat xVelocity,yVelocity;
+	
 
 	//constructer
-	Character(GLfloat height, GLfloat width, GLfloat  xpos, GLfloat  ypos, GLfloat xVelocity, GLfloat yVelocity);
+	Character();
+	Character(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint width, GLfloat xpos, GLfloat ypos);
 	
 	void draw();
 	void remove();
