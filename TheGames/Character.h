@@ -1,5 +1,6 @@
 #include <GLFW/glfw3.h>
 #include "GameObject.h"
+
 const GLfloat  maxSpeed = 400.0f;
 class Character : public GameObject{
 public:

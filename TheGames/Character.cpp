@@ -17,6 +17,7 @@ Character::Character(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint
 	
 }
 void Character::draw(){
+	
 	glPushMatrix();
 	glColor3f(1.0, 0.0, 0.0);
 	glTranslatef(Xpos, Ypos, 0.0);
@@ -27,6 +28,8 @@ void Character::draw(){
 	glVertex3f(10.5f, -10.5f, 0.0); // Start drawing a quad primitive  
 	glEnd();
 	glPopMatrix();
+	
+	
 	
 }
 void Character::Up(){

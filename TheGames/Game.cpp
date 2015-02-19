@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include <iostream>
+
 #include "Game.h"
 #include "Character.h"
 using namespace std;
@@ -45,6 +46,7 @@ void Game::ProcessInput(GLfloat dt){
 	}
 }
 void Game::Update(GLfloat dt){
+	
 	//adds resistance to slow character down
 	if(Player.xVelocity>0){
 		Player.xVelocity -= resistance;
@@ -70,8 +72,15 @@ void Game::Render(){
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glLoadIdentity();
+		//camera follows player
+		 glTranslatef(-(Player.Xpos)+500,-Player.Ypos+250,0.0);
+		 
 		//draw the objects to screen
+
 		Player.draw();
+	//	glLoadIdentity();
+		
+	     
 		
 		glFlush();
 		

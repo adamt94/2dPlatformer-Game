@@ -70,7 +70,7 @@ int main(void)
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 		glfwPollEvents();
-	
+	    
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		//Gives a 1 to 1 relationship between screen pixels and coordinates
@@ -88,6 +88,12 @@ int main(void)
 		//glVertex3f(10.0f, 10.0f, 0.0f); // The top right corner  
 		//glVertex3f(10.0f, -10.0f, 0.0f);// Start drawing a quad primitive  
 		//glEnd();
+			glBegin(GL_QUADS);
+	glVertex3f(-10.5f, -10.5f, 0.0); // The bottom left corner  
+	glVertex3f(-10.5f, 10.5f, 0.0); // The top left corner  
+	glVertex3f(10.5f, 10.5f, 0.0); // The top right corner  
+	glVertex3f(10.5f, -10.5f, 0.0); // Start drawing a quad primitive  
+	glEnd();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
