@@ -91,5 +91,5 @@ void Game::ResetLevel(){
 	//reset level when player loses
 }
 void Game::DoCollision(){
-	//check when theres are collision between objects
+	//do something when checkcollision(); is true
 }

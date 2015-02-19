@@ -28,7 +28,7 @@ public:
 
 	// Constructor(s)
 	GameObject(GLboolean isSolid, GLboolean destroyed, GLint height, GLint width, GLfloat xpos, GLfloat ypos);
-	void Collision();
+	GLboolean checkCollision();
 	
 };
 
