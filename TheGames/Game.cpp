@@ -4,8 +4,10 @@
 
 #include "Game.h"
 #include "Character.h"
+#include "GameLevel.h"
 using namespace std;
 Character Player = Character(true,true,100.0f,-100.0f,500,300);
+GameLevel level = GameLevel();
 const GLfloat resistance = 02.0f;
 Game::Game(GLuint width, GLuint height)
 : State(GAME_ACTIVE), Keys(), Width(width), Height(height)
@@ -13,7 +15,10 @@ Game::Game(GLuint width, GLuint height)
 
 }
 
-void Game::Init(){}
+void Game::Init(){
+	
+	level.Load("C:\\Users\\adam\\Documents\\Work\\Graphics\\testlevel.txt", 38, 10);
+}
 
 
 void Game::ProcessInput(GLfloat dt){
@@ -70,7 +75,7 @@ void Game::Update(GLfloat dt){
 void Game::Render(){
 	if (this->State == GAME_ACTIVE || this->State == GAME_MENU || this->State == GAME_WIN){
 		glClear(GL_COLOR_BUFFER_BIT);
-
+	
 		glLoadIdentity();
 		//camera follows player
 		 glTranslatef(-(Player.Xpos)+500,-Player.Ypos+250,0.0);

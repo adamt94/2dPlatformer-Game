@@ -62,6 +62,8 @@ int main(void)
     
 	GLfloat  deltaTime = 0.0f;
 	GLfloat lastFrame = 0.0f;
+	//intialize games
+	game.Init();
 	//GAME LOOOP
 	while (!glfwWindowShouldClose(window))
 	{
@@ -77,7 +79,7 @@ int main(void)
 		gluOrtho2D(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT);
 		glMatrixMode(GL_MODELVIEW);
 		
-		//start stuff
+		
 		game.ProcessInput(deltaTime);
 		game.Update(deltaTime);
 		game.Render();
