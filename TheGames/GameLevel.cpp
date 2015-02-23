@@ -4,12 +4,13 @@
 #include <sstream>
 
 #include <math.h>
-
+using namespace std;
 
 void GameLevel::Load(const char *file, GLuint levelWidth, GLuint levelHeight)
 {
 	
     // Clear old data
+	
     this->Bricks.clear();
 	GLuint tileCode;
     GameLevel level;
@@ -18,6 +19,7 @@ void GameLevel::Load(const char *file, GLuint levelWidth, GLuint levelHeight)
     std::vector<std::vector<GLuint>> tileData;
     if (fstream)
     {
+		
         while (std::getline(fstream, line)) // Read each line from level file
         {
             std::istringstream sstream(line);
@@ -27,26 +29,26 @@ void GameLevel::Load(const char *file, GLuint levelWidth, GLuint levelHeight)
             tileData.push_back(row);
         }
         if (tileData.size() > 0)
-			
-            this->init(tileData, levelWidth, levelHeight);
+			this->init(tileData, levelWidth, levelHeight);
     }
 
 	
 
 }
 void GameLevel::Draw(){
-	for (GameObject &tile : this->Bricks)
-	if (!tile.Destroyed)
-	{
-		cout << "YOU WOT M( DRAW MTE" << endl;
-		glColor3f(0.0f,1.0f,0.0f);
-		glBegin(GL_QUADS);
-		glVertex3f(-10.5f, -10.5f, 0.0); // The bottom left corner  
-		glVertex3f(-10.5f, 10.5f, 0.0); // The top left corner  
-		glVertex3f(10.5f, 10.5f, 0.0); // The top right corner  
-		glVertex3f(10.5f, -10.5f, 0.0); // Start drawing a quad primitive  
-		glEnd();
+	for (GameObject &tile : this->Bricks){
+		if (!tile.Destroyed)
+		{
 		
+			glColor3f(0.0f,1.0f,0.0f);
+			glBegin(GL_QUADS);
+			glVertex3f(tile.Xpos,tile.Ypos,0);
+			glVertex3f(tile.Xpos+tile.Width,tile.Ypos,0);
+			glVertex3f(tile.Xpos+tile.Width,tile.Ypos+tile.Height,0);
+			glVertex3f(tile.Xpos,tile.Ypos+tile.Height,0);
+			glEnd();
+		
+		}
 	}
 		
 
@@ -55,9 +57,11 @@ void GameLevel::Draw(){
 }
 void GameLevel::init(std::vector<std::vector<GLuint>> tileData, GLuint levelWidth, GLuint levelHeight){
 	GLuint height = tileData.size();
+	cout<<"height"<<height<<endl;
+			
 	GLuint width = tileData[0].size(); // Note we can index vector at [0] since this function is only called if height > 0
-	GLfloat unit_width = levelWidth / static_cast<GLfloat>(width);
-	GLfloat unit_height = levelHeight / height;
+	GLfloat unit_width = 32;
+	GLfloat unit_height = 32;
 	// Initialize level tiles based on tileData		
 	for (GLuint y = 0; y < height; ++y)
 	{
@@ -66,10 +70,10 @@ void GameLevel::init(std::vector<std::vector<GLuint>> tileData, GLuint levelWidt
 			// Check block type from level data (2D level array)
 			if (tileData[y][x] == 1) // Solid
 			{
-				GameObject tile(true, false, unit_height*x, unit_width*y, x, y);
-
+				GameObject tile(true, false, unit_height, unit_width, unit_height*x, unit_width*y);
+				
 				this->Bricks.push_back(tile);
-				Draw();
+				
 				
 			}
 			else if (tileData[y][x] > 1)	// Non-solid; now determine its color based on level data

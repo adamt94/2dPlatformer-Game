@@ -83,19 +83,8 @@ int main(void)
 		game.ProcessInput(deltaTime);
 		game.Update(deltaTime);
 		game.Render();
-		//glColor3f(1.0, 1.0, 0.0);
-		//glBegin(GL_QUADS); 
-		//glVertex3f(-10.0f, -10.0f, 0.0f); // The bottom left corner  
-		//glVertex3f(-10.0f, 10.0f, 0.0f); // The top left corner  
-		//glVertex3f(10.0f, 10.0f, 0.0f); // The top right corner  
-		//glVertex3f(10.0f, -10.0f, 0.0f);// Start drawing a quad primitive  
-		//glEnd();
-			glBegin(GL_QUADS);
-	glVertex3f(-10.5f, -10.5f, 0.0); // The bottom left corner  
-	glVertex3f(-10.5f, 10.5f, 0.0); // The top left corner  
-	glVertex3f(10.5f, 10.5f, 0.0); // The top right corner  
-	glVertex3f(10.5f, -10.5f, 0.0); // Start drawing a quad primitive  
-	glEnd();
+	
+	
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

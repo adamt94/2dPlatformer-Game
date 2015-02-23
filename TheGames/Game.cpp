@@ -6,7 +6,7 @@
 #include "Character.h"
 #include "GameLevel.h"
 using namespace std;
-Character Player = Character(true,true,100.0f,-100.0f,500,300);
+Character Player = Character(true,true,32.0f,-32.0f,500,300);
 GameLevel level = GameLevel();
 const GLfloat resistance = 02.0f;
 Game::Game(GLuint width, GLuint height)
@@ -17,7 +17,8 @@ Game::Game(GLuint width, GLuint height)
 
 void Game::Init(){
 	
-	level.Load("C:\\Users\\adam\\Documents\\Work\\Graphics\\testlevel.txt", 38, 10);
+	level.Load("lvltest.txt",1000 , 600);
+   
 }
 
 
@@ -53,16 +54,17 @@ void Game::ProcessInput(GLfloat dt){
 void Game::Update(GLfloat dt){
 	
 	//adds resistance to slow character down
-	if(Player.xVelocity>0){
+	if(Player.xVelocity>1){
 		Player.xVelocity -= resistance;
 	}
-	if(Player.xVelocity<0){
+	if(Player.xVelocity<-1){
+		
 		Player.xVelocity += resistance;
 	}
-	if(Player.yVelocity>0){
+	if(Player.yVelocity>1){
 		Player.yVelocity -= resistance;
 	}
-	if(Player.yVelocity<0){
+	if(Player.yVelocity<-1){
 		Player.yVelocity += resistance;
 	}
 	//update player position
@@ -79,9 +81,8 @@ void Game::Render(){
 		glLoadIdentity();
 		//camera follows player
 		 glTranslatef(-(Player.Xpos)+500,-Player.Ypos+250,0.0);
-		 
+		  level.Draw();
 		//draw the objects to screen
-
 		Player.draw();
 	//	glLoadIdentity();
 		
