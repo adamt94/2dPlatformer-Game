@@ -11,7 +11,8 @@ using namespace std;
 Character::Character(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint width, GLfloat xpos, GLfloat ypos)
 	:GameObject(IsSolid, Destroyed, height, width, xpos, ypos)
 {
-	
+	Xpos = 0.0f;
+	Ypos = 0.0f;
 	xVelocity = 0.0f; 
 	yVelocity = 0.0f;
 	

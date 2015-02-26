@@ -81,7 +81,9 @@ int main(void)
 		
 		
 		game.ProcessInput(deltaTime);
+		
 		game.Update(deltaTime);
+		
 		game.Render();
 	
 	

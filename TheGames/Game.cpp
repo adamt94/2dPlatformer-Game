@@ -67,6 +67,7 @@ void Game::Update(GLfloat dt){
 	if(Player.yVelocity<-1){
 		Player.yVelocity += resistance;
 	}
+	
 	//update player position
 	Player.Xpos += Player.xVelocity*dt;
 	Player.Ypos += Player.yVelocity*dt;
@@ -81,6 +82,8 @@ void Game::Render(){
 		glLoadIdentity();
 		//camera follows player
 		 glTranslatef(-(Player.Xpos)+500,-Player.Ypos+250,0.0);
+		 //check collisions
+		 DoCollision();
 		  level.Draw();
 		//draw the objects to screen
 		Player.draw();
@@ -97,5 +100,10 @@ void Game::ResetLevel(){
 	//reset level when player loses
 }
 void Game::DoCollision(){
+	
+	for (GameObject &tile : level.Bricks){
+		
+		Player.checkCollision(Player, tile);
+	}
 	//do something when checkcollision(); is true
 }
