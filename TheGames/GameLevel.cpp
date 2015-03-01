@@ -39,14 +39,15 @@ void GameLevel::Draw(){
 	for (GameObject &tile : this->Bricks){
 		if (!tile.Destroyed)
 		{
-		
+			glPushMatrix();
 			glColor3f(0.0f,1.0f,0.0f);
 			glBegin(GL_QUADS);
-			glVertex3f(tile.Xpos,tile.Ypos,0);
-			glVertex3f(tile.Xpos+tile.Width,tile.Ypos,0);
-			glVertex3f(tile.Xpos+tile.Width,tile.Ypos+tile.Height,0);
-			glVertex3f(tile.Xpos,tile.Ypos+tile.Height,0);
+			glVertex3f(tile.Xpos,tile.Ypos,0.0);
+			glVertex3f(tile.Xpos+tile.Width,tile.Ypos,0.0);
+			glVertex3f(tile.Xpos+tile.Width,tile.Ypos+tile.Height,0.0);
+			glVertex3f(tile.Xpos,tile.Ypos+tile.Height,0.0);
 			glEnd();
+			glPopMatrix();
 		
 		}
 	}
@@ -68,15 +69,15 @@ void GameLevel::init(std::vector<std::vector<GLuint>> tileData, GLuint levelWidt
 		for (GLuint x = 0; x < width; ++x)
 		{
 			// Check block type from level data (2D level array)
-			if (tileData[y][x] == 1) // Solid
+			if (tileData[y][x] == 2) // Solid
 			{
-				GameObject tile(true, false, unit_height, unit_width, unit_height*x, unit_width*y);
+				GameObject tile(true, false, unit_height, unit_width, unit_width*x, unit_height*y);
 				
 				this->Bricks.push_back(tile);
 				
 				
 			}
-			else if (tileData[y][x] > 1)	// Non-solid; now determine its color based on level data
+			else if (tileData[y][x] > 1)	
 			{
 			
 
