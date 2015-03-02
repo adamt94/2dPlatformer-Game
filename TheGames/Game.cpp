@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 #include <iostream>
-
 #include "Game.h"
 #include "Character.h"
 #include "GameLevel.h"
@@ -9,6 +8,7 @@ using namespace std;
 Character Player = Character(true,true,32.0f,-32.0f,500,300);
 GameLevel level = GameLevel();
 const GLfloat resistance = 02.0f;
+const GLfloat gravity = -0.15f;
 Game::Game(GLuint width, GLuint height)
 : State(GAME_ACTIVE), Keys(), Width(width), Height(height)
 {
@@ -52,7 +52,7 @@ void Game::ProcessInput(GLfloat dt){
 	}
 }
 void Game::Update(GLfloat dt){
-	
+	Player.yVelocity  +=gravity;
 	//adds resistance to slow character down
 	if(Player.xVelocity>1){
 		Player.xVelocity -= resistance;
@@ -65,7 +65,7 @@ void Game::Update(GLfloat dt){
 		Player.yVelocity -= resistance;
 	}
 	if(Player.yVelocity<-1){
-		Player.yVelocity += resistance;
+		//Player.yVelocity += resistance;
 	}
 	
 	//update player position
@@ -105,8 +105,41 @@ void Game::DoCollision(){
 	
 	for (GameObject &tile : level.Bricks){
 		
-		Player.checkCollision(Player, tile);
+		if(Player.checkCollision(Player, tile) == true)
+		{
+			Player.jump = true;// when collision player can jump
+
+			if(Player.xVelocity > 0) //came from left
+			{
+				
+				//Player.Xpos = tile.Xpos - tile.Width;
+				
+			}
+			if(Player.xVelocity < 0) //came from right
+			{
+				
+			    // Player.Xpos = tile.Xpos + tile.Width;
+			}
+			if(Player.yVelocity > 0) //came from top
+			{
+				Player.Ypos = tile.Ypos-tile.Height;
+			}
+			if(Player.yVelocity < 0) //came from bottom
+			{
+				Player.Ypos = tile.Ypos+tile.Height;
+			}
+			
+		}
+
+				
+		     
+
+		
+
+
 	}
+
+
 
 	//do something when checkcollision(); is true
 }

@@ -19,7 +19,7 @@ GLboolean GameObject::checkCollision(GameObject a, GameObject b){
 		// collision detected!
 	
 	{
-		cout << "TRUE" << endl;
+		
 		return true;
 	}
 

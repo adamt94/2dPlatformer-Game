@@ -48,6 +48,7 @@ void GameLevel::Draw(){
 			glVertex3f(tile.Xpos,tile.Ypos+tile.Height,0.0);
 			glEnd();
 			glPopMatrix();
+				
 		
 		}
 	}
@@ -69,7 +70,7 @@ void GameLevel::init(std::vector<std::vector<GLuint>> tileData, GLuint levelWidt
 		for (GLuint x = 0; x < width; ++x)
 		{
 			// Check block type from level data (2D level array)
-			if (tileData[y][x] == 2) // Solid
+			if (tileData[y][x] == 1) // Solid
 			{
 				GameObject tile(true, false, unit_height, unit_width, unit_width*x, unit_height*y);
 				

@@ -11,10 +11,11 @@ using namespace std;
 Character::Character(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint width, GLfloat xpos, GLfloat ypos)
 	:GameObject(IsSolid, Destroyed, height, width, xpos, ypos)
 {
-	Xpos = 0.0f;
-	Ypos = 0.0f;
+	Xpos = 70.0f;
+	Ypos = 40.0f;
 	xVelocity = 0.0f; 
 	yVelocity = 0.0f;
+	jump = false;
 	
 }
 void Character::draw(){
@@ -33,10 +34,17 @@ void Character::draw(){
 	
 }
 void Character::Up(){
-	//increases speed until max
-	if(yVelocity<maxSpeed)
+	//jump again when reaches ground
+	if(jump)
 	{
-	  yVelocity+=2.2f;
+	   jump = false;
+	
+	//increases speed until max jump height
+	  while(yVelocity<maxJump)
+	  {
+		
+	     yVelocity+=2.2f;
+      }
 	}
 	
 }
@@ -44,7 +52,7 @@ void Character::Down(){
 	//increases speed until max
 	if(yVelocity>(-maxSpeed))
 	{
-	  yVelocity-=2.2f;
+	 // yVelocity-=2.2f;
 	}
 	
 	
