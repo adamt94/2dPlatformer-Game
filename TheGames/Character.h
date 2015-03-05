@@ -2,10 +2,11 @@
 #include "GameObject.h"
 
 const GLfloat  maxSpeed = 400.0f;
+const GLfloat maxJump = 700.0f;
 class Character : public GameObject{
 public:
 	GLfloat xVelocity,yVelocity;
-	
+	GLboolean jump;
 
 	//constructer
 	Character();
