@@ -23,12 +23,15 @@ public:
 	GLint		Width;
 	GLfloat     Xpos;
 	GLfloat		Ypos;
+	
+	GLfloat xVelocity,yVelocity;
 
 	// Render state
 
 	// Constructor(s)
 	GameObject(GLboolean isSolid, GLboolean destroyed, GLint height, GLint width, GLfloat xpos, GLfloat ypos);
 	GLboolean checkCollision(GameObject a, GameObject b);
+	GLfloat checkCollision2(GameObject a, GameObject b, GLfloat& normalyx, GLfloat& normaly);
 	void Draw();
 	
 };

@@ -52,7 +52,12 @@ void Game::ProcessInput(GLfloat dt){
 	}
 }
 void Game::Update(GLfloat dt){
-	Player.yVelocity  +=gravity;
+	if(Player.yVelocity>-200.0f)//max acceleration downwards
+	{
+	   Player.yVelocity  +=gravity;//apply gravity
+	}
+	
+	
 	//adds resistance to slow character down
 	if(Player.xVelocity>1){
 		Player.xVelocity -= resistance;
@@ -70,7 +75,7 @@ void Game::Update(GLfloat dt){
 	
 	//update player position
 	Player.Xpos += Player.xVelocity*dt;
-	Player.Ypos += Player.yVelocity*dt;
+	Player.Ypos += (Player.yVelocity*dt);
 	
 	
 
@@ -112,24 +117,45 @@ void Game::DoCollision(){
 			if(Player.xVelocity > 0) //came from left
 			{
 				
-				//Player.Xpos = tile.Xpos - tile.Width;
+				//Player.xVelocity = -Player.xVelocity;
 				
 			}
 			if(Player.xVelocity < 0) //came from right
 			{
 				
-			    // Player.Xpos = tile.Xpos + tile.Width;
+			  //  Player.xVelocity = -Player.xVelocity;
 			}
 			if(Player.yVelocity > 0) //came from top
 			{
-				Player.Ypos = tile.Ypos-tile.Height;
+				Player.yVelocity = -Player.yVelocity;
 			}
 			if(Player.yVelocity < 0) //came from bottom
 			{
-				Player.Ypos = tile.Ypos+tile.Height;
+				Player.yVelocity = -Player.yVelocity;
 			}
+
+
+		/* float normalx = 0.0f, normaly= 0.0f;
+		 float collisiontime = Player.checkCollision2(Player, tile,  normalx,  normaly);
+		 Player.Xpos += Player.xVelocity * collisiontime;
+		 Player.Ypos += Player.yVelocity * collisiontime;
+	
+	    float remainingtime = 1.0f - collisiontime;
+		    // slide
+	    float dotprod = (Player.xVelocity * normaly + Player.yVelocity * normalx) * remainingtime;
+		Player.xVelocity = dotprod * normaly;
+		Player.yVelocity = dotprod * normalx;
+		    // deflect
+		Player.xVelocity *= remainingtime;
+		Player.yVelocity *= remainingtime;
+    if (abs(normalx) > 0.0001f)
+		Player.xVelocity = -Player.xVelocity;
+    if (abs(normaly) > 0.0001f)
+		Player.yVelocity = -Player.yVelocity;
 			
-		}
+		
+		*/
+	
 
 				
 		     
@@ -142,4 +168,5 @@ void Game::DoCollision(){
 
 
 	//do something when checkcollision(); is true
+	}
 }
