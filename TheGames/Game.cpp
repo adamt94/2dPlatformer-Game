@@ -5,7 +5,7 @@
 #include "Character.h"
 #include "GameLevel.h"
 using namespace std;
-Character Player = Character(true,true,32.0f,-32.0f,500,300);
+Character Player = Character(true,true,32.0f,32.0f,500,300);
 GameLevel level = GameLevel();
 const GLfloat resistance = 02.0f;
 const GLfloat gravity = -0.15f;
@@ -107,66 +107,66 @@ void Game::ResetLevel(){
 	//reset level when player loses
 }
 void Game::DoCollision(){
-	
+
 	for (GameObject &tile : level.Bricks){
-		
-		if(Player.checkCollision(Player, tile) == true)
+
+		if (Player.checkCollision(Player, tile) == true)
 		{
-			Player.jump = true;// when collision player can jump
+				Player.jump = true;// when collision player can jump
 
-			if(Player.xVelocity > 0) //came from left
-			{
+				if(Player.xVelocity > 0) //came from left
+				{
+
 				
-				//Player.xVelocity = -Player.xVelocity;
+
+				}
+				if(Player.xVelocity < 0) //came from right
+				{
+
 				
-			}
-			if(Player.xVelocity < 0) //came from right
-			{
-				
-			  //  Player.xVelocity = -Player.xVelocity;
-			}
-			if(Player.yVelocity > 0) //came from top
-			{
+				}
+				if(Player.yVelocity > 0) //came from top
+				{
+
 				Player.yVelocity = -Player.yVelocity;
-			}
-			if(Player.yVelocity < 0) //came from bottom
-			{
-				Player.yVelocity = -Player.yVelocity;
-			}
-
-
-		/* float normalx = 0.0f, normaly= 0.0f;
-		 float collisiontime = Player.checkCollision2(Player, tile,  normalx,  normaly);
-		 Player.Xpos += Player.xVelocity * collisiontime;
-		 Player.Ypos += Player.yVelocity * collisiontime;
-	
-	    float remainingtime = 1.0f - collisiontime;
-		    // slide
-	    float dotprod = (Player.xVelocity * normaly + Player.yVelocity * normalx) * remainingtime;
-		Player.xVelocity = dotprod * normaly;
-		Player.yVelocity = dotprod * normalx;
-		    // deflect
-		Player.xVelocity *= remainingtime;
-		Player.yVelocity *= remainingtime;
-    if (abs(normalx) > 0.0001f)
-		Player.xVelocity = -Player.xVelocity;
-    if (abs(normaly) > 0.0001f)
-		Player.yVelocity = -Player.yVelocity;
-			
-		
-		*/
-	
-
 				
-		     
+				
+				}
+				if(Player.yVelocity < 0) //came from bottom
+				{
+				Player.yVelocity = -Player.yVelocity;
+				
+				
+				}
+				
+		}
+
+		 
+		/*	float normalx, normaly;
+			float collisiontime = Player.checkCollision2(Player, tile, normalx, normaly);
+			//cout << collisiontime << endl;
+			Player.Xpos += Player.xVelocity * collisiontime;
+			Player.Ypos += Player.yVelocity * collisiontime;
+
+			float remainingtime = 1.0f - collisiontime;*/
+
+
 
 		
 
 
-	}
 
 
 
-	//do something when checkcollision(); is true
+
+
+
+
+
+
+
+
+
+		//do something when checkcollision(); is true
 	}
 }
