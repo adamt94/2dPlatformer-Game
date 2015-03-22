@@ -78,6 +78,14 @@ void GameLevel::init(std::vector<std::vector<GLuint>> tileData, GLuint levelWidt
 				
 				
 			}
+			else if (tileData[y][x] == 2)	
+			{
+			
+				GameObject tile(true, false, unit_height, unit_width, unit_width*x, unit_height*y);
+				
+				this->Bricks.push_back(tile);
+			
+			}
 			else if (tileData[y][x] > 1)	
 			{
 			

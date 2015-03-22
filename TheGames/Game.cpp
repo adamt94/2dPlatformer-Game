@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include <iostream>
+#include <cmath>
 #include "Game.h"
 #include "Character.h"
 #include "GameLevel.h"
@@ -107,48 +108,61 @@ void Game::ResetLevel(){
 	//reset level when player loses
 }
 void Game::DoCollision(){
-
+	GLboolean checkJump;
 	for (GameObject &tile : level.Bricks){
 
 		if (Player.checkCollision(Player, tile) == true)
 		{
-				Player.jump = true;// when collision player can jump
-
-				if(Player.xVelocity > 0) //came from left
-				{
-
 				
 
-				}
-				if(Player.xVelocity < 0) //came from right
-				{
 
-				
-				}
-				if(Player.yVelocity > 0) //came from top
+				GLfloat left = tile.Xpos - (Player.Xpos + Player.Width);
+				GLfloat right = (tile.Xpos + tile.Width) - Player.Xpos;
+				GLfloat top = tile.Ypos - (Player.Ypos+ Player.Height);
+				GLfloat bottom = (tile.Ypos + tile.Width) - Player.Ypos;
+				GLfloat mtdX;
+				GLfloat mtdY;
+			    Player.jump = false;// when collision player can jump
+				if(abs(left)<right)
 				{
-
-				Player.yVelocity = -Player.yVelocity;
-				
+					Player.xVelocity = 0;
+					mtdX = left;
 				
 				}
-				if(Player.yVelocity < 0) //came from bottom
-				{
-				Player.yVelocity = -Player.yVelocity;
-				
-				
+				else {
+					Player.xVelocity = 0;
+					mtdX = right;
 				}
+				if(abs(top)< bottom)
+				{
+			
+					mtdY = top;
+				}
+				else{
+					
+					Player.jump = true;// when collision player can jump
+					mtdY = bottom;
+				}
+
+				if(abs(mtdX) < abs(mtdY))
+				{
+					
+					mtdY =0;
+				}
+				else{
+				 
+					mtdX = 0;
+				}
+				
+				Player.Ypos += mtdY;
+				Player.Xpos += mtdX;
+
+
 				
 		}
 
 		 
-		/*	float normalx, normaly;
-			float collisiontime = Player.checkCollision2(Player, tile, normalx, normaly);
-			//cout << collisiontime << endl;
-			Player.Xpos += Player.xVelocity * collisiontime;
-			Player.Ypos += Player.yVelocity * collisiontime;
 
-			float remainingtime = 1.0f - collisiontime;*/
 
 
 

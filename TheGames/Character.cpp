@@ -43,7 +43,7 @@ void Character::Up(){
 	  while(yVelocity<maxJump)
 	  {
 		
-	     yVelocity+=2.2f;
+	     yVelocity+=50.2f;
       }
 	}
 	
