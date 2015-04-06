@@ -1,7 +1,9 @@
 #ifndef GameObject_H
 #define GameObject_H
+
 #include <iostream>
 #include "stdafx.h"
+
 #include <GLFW/glfw3.h>
 using namespace std;
 

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+
 #include "Character.h"
 #include <cmath>
 #include <algorithm>

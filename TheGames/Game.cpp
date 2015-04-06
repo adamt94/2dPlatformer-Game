@@ -2,12 +2,15 @@
 
 #include <iostream>
 #include <cmath>
+
 #include "Game.h"
 #include "Character.h"
 #include "GameLevel.h"
+
 using namespace std;
 Character Player = Character(true,true,32.0f,32.0f,500,300);
 GameLevel level = GameLevel();
+
 const GLfloat resistance = 02.0f;
 const GLfloat gravity = -0.15f;
 Game::Game(GLuint width, GLuint height)
@@ -19,6 +22,8 @@ Game::Game(GLuint width, GLuint height)
 void Game::Init(){
 	
 	level.Load("lvltest.txt",1000 , 600);
+	
+	
    
 }
 
@@ -122,15 +127,16 @@ void Game::DoCollision(){
 				GLfloat bottom = (tile.Ypos + tile.Width) - Player.Ypos;
 				GLfloat mtdX;
 				GLfloat mtdY;
+			
 			    Player.jump = false;// when collision player can jump
 				if(abs(left)<right)
 				{
-					Player.xVelocity = 0;
+				//	Player.xVelocity = 0;
 					mtdX = left;
 				
 				}
 				else {
-					Player.xVelocity = 0;
+					//Player.xVelocity = 0;
 					mtdX = right;
 				}
 				if(abs(top)< bottom)

@@ -1,13 +1,15 @@
 #include "stdafx.h"
+
 #include <iostream>
 
-
+#include "LTexture.h"
 #include "Character.h"
+
 using namespace std;
 
 
 
-
+LTexture t;
 Character::Character(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint width, GLfloat xpos, GLfloat ypos)
 	:GameObject(IsSolid, Destroyed, height, width, xpos, ypos)
 {
@@ -15,20 +17,25 @@ Character::Character(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint
 	Ypos = 40.0f;
 	xVelocity = 0.0f; 
 	yVelocity = 0.0f;
+
 	jump = false;
+	t.loadTextureFromFile("characterstandingpos.png");
+
+	
 	
 }
 void Character::draw(){
-	
-	glPushMatrix();
-	glColor3f(1.0, 0.0, 0.0);
-		glBegin(GL_QUADS);
-			glVertex3f(Xpos,Ypos,0.0);
-			glVertex3f(Xpos+Width,Ypos,0.0);
-			glVertex3f(Xpos+Width,Ypos+Height,0.0);
-			glVertex3f(Xpos,Ypos+Height,0.0);
-		glEnd();
-	glPopMatrix();
+	//
+	//glPushMatrix();
+	//glColor3f(1.0, 0.0, 0.0);
+	//	glBegin(GL_QUADS);
+	//		glVertex3f(Xpos,Ypos,0.0);
+	//		glVertex3f(Xpos+Width,Ypos,0.0);
+	//		glVertex3f(Xpos+Width,Ypos+Height,0.0);
+	//		glVertex3f(Xpos,Ypos+Height,0.0);
+	//	glEnd();
+	//glPopMatrix();
+	t.render(Xpos,Ypos,Width,Height);
 	
 	
 	
