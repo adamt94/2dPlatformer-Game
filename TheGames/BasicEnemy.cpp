@@ -7,6 +7,7 @@ BasicEnemy::BasicEnemy(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLi
 
 	xVelocity = 0.0f;
 	yVelocity = 0.0f;
+	dead = false;
 	
 };
 
@@ -40,10 +41,12 @@ void BasicEnemy::Draw(){
 };
 
 void BasicEnemy::remove(){
-
+	dead = true;
 };
-void BasicEnemy::PlayerCollision(GameObject player)
+void BasicEnemy::PlayerCollision(GameObject player,BasicEnemy enemy)
 {
+	
+
 
 };
 

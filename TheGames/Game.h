@@ -35,7 +35,8 @@ public:
 	void ResetLevel();
 	void ResetPlayer();
 	void drawBackground();
-	std::vector<GLfloat> CalculateMinTrasnlation(GameObject tile);
+	std::vector<GLfloat> CalculateMinTrasnlation(GameObject tile,GameObject Player, GLboolean isPlayer);//boolean checks if its player to enable jumping
+	void PlayerEnemyCollision(GameObject player, GameObject enemy);//collision resolution for player and enemy
 	
 };
 #endif

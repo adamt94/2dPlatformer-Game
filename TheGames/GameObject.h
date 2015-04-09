@@ -27,7 +27,7 @@ public:
 	GLint		Width;
 	GLfloat     Xpos;
 	GLfloat		Ypos;
-	
+	GLboolean	remove;
 	GLfloat xVelocity,yVelocity;
 
 	// Render state

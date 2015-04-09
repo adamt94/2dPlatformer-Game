@@ -3,8 +3,9 @@
 #include <iostream>
 #include <cmath>
 #include "Game.h"
-#include "BasicEnemy.h"
+
 #include "Character.h"
+#include "BasicEnemy.h"
 #include "GameLevel.h"
 #include <GLFW\glfw3.h>
 using namespace std;
@@ -71,6 +72,10 @@ void Game::ProcessInput(GLfloat dt){
 	}
 }
 void Game::Update(GLfloat dt){
+	if (Player.remove)
+	{
+		ResetLevel();
+	}
 	if(Player.yVelocity>-500.0f)//max acceleration downwards
 	{
 	   Player.yVelocity  +=gravity;//apply gravity
@@ -131,7 +136,11 @@ void Game::Render(){
 		  level.Draw();
 		//draw the objects to screen
 		Player.draw();
-		Enemy.Draw();
+		if (Enemy.dead == false)
+		{
+
+			Enemy.Draw();
+		}
 	
 	//	glLoadIdentity();
 		
@@ -144,7 +153,8 @@ void Game::Render(){
 }
 
 void Game::ResetLevel(){
-	 Player = Character(true, true, 32.0f, 32.0f, 500, 300);
+	 Player = Character(true, true, 32.0f, 32.0f, 70, 40);
+	 Enemy = BasicEnemy(true, true, 32.0f, 32.0f, 140, 40);
 	 level = GameLevel();
 	 Init();
 	//reset level when player loses
@@ -152,57 +162,20 @@ void Game::ResetLevel(){
 void Game::DoCollision(){
 	GLboolean checkJump;
 	for (GameObject &tile : level.Bricks){
+		if (Enemy.checkCollision(Enemy, tile) == true)
 
+		{
+
+			vector<GLfloat> mtd = CalculateMinTrasnlation(tile, Enemy, FALSE);
+
+			Enemy.Ypos += mtd[1];
+			Enemy.Xpos += mtd[0];
+
+		}
 		if (Player.checkCollision(Player, tile) == true)//if there was a collison
 		{
 				
-
-
-			/*	GLfloat left = tile.Xpos - (Player.Xpos + Player.Width);
-				GLfloat right = (tile.Xpos + tile.Width) - Player.Xpos;
-				GLfloat top = tile.Ypos - (Player.Ypos+ Player.Height);
-				GLfloat bottom = (tile.Ypos + tile.Width) - Player.Ypos;
-				GLfloat mtdX;//minmun translation distance
-				GLfloat mtdY;
-			
-					Player.jump = false;
-				//calulcate the mtd of the axis
-				if(abs(left)<right)
-				{
-					
-					mtdX = left;
-				
-				}
-				else {
-					
-					mtdX = right;
-				}
-				//calculate the mtd of the y axis
-				if(abs(top)< bottom)
-				{
-			
-					mtdY = top;
-				}
-				else{
-					
-					Player.jump = true;// when on the bottom enable jump
-					Player.upintheair = false; //upon landing, reset to false
-					Player.DoubleJumpReady = true; //upon landing, reset to true
-					mtdY = bottom;
-					Player.Doublejump = false;//end of double jump so can change texture
-				}
-				//assign  the largest mtd to 0 so player is moved the mtd on collision
-				if(abs(mtdX) < abs(mtdY))
-				{
-					
-					mtdY =0;
-				}
-				else{
-				 
-					mtdX = 0;
-				}*/
-				//move the players position out of collision
-			    vector<GLfloat> mtd = CalculateMinTrasnlation(tile);
+			    vector<GLfloat> mtd = CalculateMinTrasnlation(tile,Player,TRUE);
 				
 				Player.Ypos += mtd[1];
 				Player.Xpos += mtd[0];
@@ -218,14 +191,16 @@ void Game::DoCollision(){
 
 				
 		}
+	
 
-		 
-
-
-
-
+	
 
 	}
+	if (Player.checkCollision(Player, Enemy) == true&&Enemy.dead==false)
+	{
+		PlayerEnemyCollision(Player, Enemy);
+	}
+
 }
 
 void Game::drawBackground(){
@@ -255,16 +230,16 @@ void Game::drawBackground(){
 
 }
 
-vector<GLfloat> Game::CalculateMinTrasnlation(GameObject tile){
+vector<GLfloat> Game::CalculateMinTrasnlation(GameObject tile, GameObject player, GLboolean isPlayer){
 	vector<GLfloat> mtd(2);
-	GLfloat left = tile.Xpos - (Player.Xpos + Player.Width);
-	GLfloat right = (tile.Xpos + tile.Width) - Player.Xpos;
-	GLfloat top = tile.Ypos - (Player.Ypos + Player.Height);
-	GLfloat bottom = (tile.Ypos + tile.Width) - Player.Ypos;
+	GLfloat left = tile.Xpos - (player.Xpos + player.Width);
+	GLfloat right = (tile.Xpos + tile.Width) - player.Xpos;
+	GLfloat top = tile.Ypos - (player.Ypos + player.Height);
+	GLfloat bottom = (tile.Ypos + tile.Width) - player.Ypos;
 	GLfloat mtdX;//minmun translation distance
 	GLfloat mtdY;
 
-	Player.jump = false;
+	//Player.jump = false;
 	//calulcate the mtd of the axis
 	if (abs(left)<right)
 	{
@@ -283,12 +258,16 @@ vector<GLfloat> Game::CalculateMinTrasnlation(GameObject tile){
 		mtdY = top;
 	}
 	else{
-
-		Player.jump = true;// when on the bottom enable jump
-		Player.upintheair = false; //upon landing, reset to false
-		Player.DoubleJumpReady = true; //upon landing, reset to true
 		mtdY = bottom;
-		Player.Doublejump = false;//end of double jump so can change texture
+		if (isPlayer&&(mtdY<mtdX))//check if it wasnt a horizontal collision
+		{
+
+			Player.jump = true;// when on the bottom enable jump
+			Player.upintheair = false; //upon landing, reset to false
+			Player.DoubleJumpReady = true; //upon landing, reset to true
+			Player.Doublejump = false;//end of double jump so can change texture
+		}
+		
 	}
 	//assign  the largest mtd to 0 so player is moved the mtd on collision
 	if (abs(mtdX) < abs(mtdY))
@@ -303,4 +282,58 @@ vector<GLfloat> Game::CalculateMinTrasnlation(GameObject tile){
 	mtd[0] = mtdX;
 	mtd[1] = mtdY;
 	return mtd;
+}
+
+void Game::PlayerEnemyCollision(GameObject player, GameObject enemy){
+	GLfloat left = player.Xpos - (enemy.Xpos + enemy.Width);
+	GLfloat right = (player.Xpos + player.Width) - enemy.Xpos;
+	GLfloat top = player.Ypos - (enemy.Ypos + enemy.Height);
+	GLfloat bottom = (player.Ypos + player.Width) - enemy.Ypos;
+	GLfloat mtdX;//minmun translation distance
+	GLfloat mtdY;
+
+	//Player.jump = false;
+	//calulcate the mtd of the axis
+	if (abs(left)<right)
+	{
+
+		mtdX = left;
+
+	}
+	else {
+
+		mtdX = right;
+	}
+	//calculate the mtd of the y axis
+	if (abs(top)< bottom)
+	{
+		
+		mtdY = top;
+		
+	}
+	else{
+		mtdY = bottom;
+		//Player.remove = true;
+
+	}
+	//assign  the largest mtd to 0 so player is moved the mtd on collision
+	if (abs(mtdX) < abs(mtdY))
+	{
+		
+		mtdY = 0;
+	}
+	else{
+		
+		mtdX = 0;
+	}
+	if (mtdY != 0)
+	{
+		Player.yVelocity = -Player.yVelocity;//* jumping on enemy head bounce
+		Enemy.dead = true;
+	}
+	else{
+		ResetLevel();//player dies to enemy restart level
+	}
+	
+
 }

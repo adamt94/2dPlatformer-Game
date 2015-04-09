@@ -17,12 +17,13 @@ public:
 	GLuint leftpos = 0;
 	GLuint jetpackTexture = 0;
 	GLuint jetpackTexutureleft = 0;
+	
 	//constructer
 	Character();
 	Character(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint width, GLfloat xpos, GLfloat ypos);
 	
 	void draw();
-	void remove();
+	void Remove();
 	void Left();
 	void Right();
 	void Up();

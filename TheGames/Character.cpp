@@ -17,6 +17,7 @@ Character::Character(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint
 	jump = false;
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 
+
 	
 	
 }
