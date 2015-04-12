@@ -6,7 +6,7 @@
 class BasicEnemy : public GameObject {
 public:
 	std::vector<BasicEnemy> Enemies;
-	GLuint texture = 0;
+	GLuint texture ;
 	GLboolean dead;
 	BasicEnemy();
 	BasicEnemy(GLboolean isSolid, GLboolean destroyed, GLint height, GLint width, GLfloat xpos, GLfloat ypos);

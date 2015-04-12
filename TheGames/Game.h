@@ -20,7 +20,7 @@ public:
 	GLboolean	Keys[1024];
 	GLboolean   KeysProcessed[1024];
 	GLuint		Width, Height;
-	GLuint Background = 0;
+	GLuint Background ;
 	// Constructor/Destructor
 	Game(GLuint width, GLuint height);
 	//~Game();

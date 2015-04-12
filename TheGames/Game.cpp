@@ -6,14 +6,17 @@
 
 #include "Character.h"
 #include "BasicEnemy.h"
+#include "FreeType.h"
 #include "GameLevel.h"
 #include <GLFW\glfw3.h>
 using namespace std;
 Character Player = Character(true,true,32.0f,32.0f,70,40);
 GameLevel level = GameLevel();
-BasicEnemy Enemy = BasicEnemy(true,true,32.0f,32.0f,140,40);
+BasicEnemy Enemy = BasicEnemy(true,true,32.0f,32.0f,240,40);
 const GLfloat resistance = 02.0f;
 const GLfloat gravity = -1.15f;
+using namespace freetype;
+font_data our_font;
 Game::Game(GLuint width, GLuint height)
 : State(GAME_ACTIVE), Keys(), Width(width), Height(height)
 {
@@ -21,9 +24,8 @@ Game::Game(GLuint width, GLuint height)
 }
 
 void Game::Init(){
-	
-	level.Load("lvltest.txt",1000 , 600);
-
+	our_font.init("BKANT.TTF", 22);
+	level.Load("lvltest.txt",1000 , 600);	
 	Player.myTexture = Player.loadPNG("characterstandingpos.png");
 	level.myTexture = level.loadPNG("platform.png");
 	Background = level.loadPNG("gamebackground.png");
@@ -144,7 +146,8 @@ void Game::Render(){
 	
 	//	glLoadIdentity();
 		
-		
+		//fonts
+		print(our_font, 20.0, 20.0, "fifty two - %7.2f",Player.xVelocity);
 	     
 		
 		glFlush();
@@ -154,7 +157,7 @@ void Game::Render(){
 
 void Game::ResetLevel(){
 	 Player = Character(true, true, 32.0f, 32.0f, 70, 40);
-	 Enemy = BasicEnemy(true, true, 32.0f, 32.0f, 140, 40);
+	 Enemy = BasicEnemy(true, true, 32.0f, 32.0f, 240, 40);
 	 level = GameLevel();
 	 Init();
 	//reset level when player loses

@@ -4,7 +4,7 @@
 class GameLevel : public GameObject
 {
 public:
-	GLuint myTexture = 0;
+	GLuint myTexture ;
     // Level state
     std::vector<GameObject> Bricks;
     // Constructor

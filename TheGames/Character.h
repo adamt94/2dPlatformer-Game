@@ -9,14 +9,14 @@ const GLfloat maxJump = 800.0f;
 class Character : public GameObject{
 public:
 	GLboolean jump;
-	GLboolean upintheair = false;
-	GLboolean DoubleJumpReady = false;
-	GLboolean playerleft = false; //check if player walking left
-	GLboolean Doublejump = false;
-	GLuint myTexture = 0;
-	GLuint leftpos = 0;
-	GLuint jetpackTexture = 0;
-	GLuint jetpackTexutureleft = 0;
+	GLboolean upintheair;
+	GLboolean DoubleJumpReady ;
+	GLboolean playerleft ; //check if player walking left
+	GLboolean Doublejump ;
+	GLuint myTexture ;
+	GLuint leftpos ;
+	GLuint jetpackTexture ;
+	GLuint jetpackTexutureleft ;
 	
 	//constructer
 	Character();
