@@ -120,16 +120,17 @@ void Game::Render(){
 		glClear(GL_COLOR_BUFFER_BIT);
 		drawBackground();
 		glLoadIdentity();
+		print(our_font,790.0, 570.0, "Score:%7.2f",Player.xVelocity);
 		//camera follows player
 		if (-(Player.Xpos) + 500 < 0 )
 		{
 
-
+		
 			glTranslatef(-(Player.Xpos) + 500, 0.0, 0.0);
 		}
 		if (-(Player.Ypos) + 250 < 0)
 		{
-
+		
 			glTranslatef(0.0, -(Player.Ypos)+250, 0.0);
 		}
 		 
@@ -147,7 +148,7 @@ void Game::Render(){
 	//	glLoadIdentity();
 		
 		//fonts
-		print(our_font, 20.0, 20.0, "fifty two - %7.2f",Player.xVelocity);
+	
 	     
 		
 		glFlush();
