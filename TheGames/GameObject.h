@@ -25,6 +25,7 @@ public:
 	GLboolean   Destroyed;
 	GLint		Height;
 	GLint		Width;
+	GLint		ID;
 	GLfloat     Xpos;
 	GLfloat		Ypos;
 	GLboolean	remove;

@@ -12,6 +12,7 @@ using namespace std;
 Character::Character(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint width, GLfloat xpos, GLfloat ypos)
 	:GameObject(IsSolid, Destroyed, height, width, xpos, ypos)
 {
+	ID = 3;
 	xVelocity = 0.0f; 
 	yVelocity = 0.0f;
 	jump = false;
@@ -21,6 +22,7 @@ Character::Character(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint
 	
 	
 }
+
 void Character::draw(){
 	if (playerleft == false){ 
 		glBindTexture(GL_TEXTURE_2D, myTexture);//walking right texture

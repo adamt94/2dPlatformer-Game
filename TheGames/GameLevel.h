@@ -6,8 +6,9 @@ class GameLevel : public GameObject
 public:
 	GLuint myTexture ;
     // Level state
-    std::vector<GameObject> Bricks;
+    std::vector<GameObject> Bricks;//platforms
     // Constructor
+	GameObject player;//object for player starting position on level
     GameLevel() { }
     // Loads level from file
     void      Load(const char *file, GLuint levelWidth, GLuint levelHeight);

@@ -20,6 +20,7 @@ public:
 	
 	//constructer
 	Character();
+	
 	Character(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint width, GLfloat xpos, GLfloat ypos);
 	
 	void draw();

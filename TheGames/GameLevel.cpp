@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "GameLevel.h"
+#include "Game.h"
+#include "Character.h"
+#include "BasicEnemy.h"
 #include <fstream>
 #include <sstream>
 #include <math.h>
@@ -36,7 +39,7 @@ void GameLevel::Load(const char *file, GLuint levelWidth, GLuint levelHeight)
 }
 void GameLevel::Draw(){
 	for (GameObject &tile : this->Bricks){
-		if (!tile.Destroyed)
+		if (!tile.Destroyed&&tile.ID==1)
 		{
 			glBindTexture(GL_TEXTURE_2D, myTexture);
 			glPushMatrix();
@@ -84,25 +87,32 @@ void GameLevel::init(std::vector<std::vector<GLuint>> tileData, GLuint levelWidt
 			if (tileData[y][x] == 1) // Solid
 			{
 				GameObject tile(true, false, unit_height, unit_width, unit_width*x, unit_height*y);
-				
+				tile.ID = 1;//ID for a standard tile
 				this->Bricks.push_back(tile);
 				
 				
 			}
-			else if (tileData[y][x] == 2)	
+			else if (tileData[y][x] == 2)	//Goal platform
 			{
 			
 				GameObject tile(true, false, unit_height, unit_width, unit_width*x, unit_height*y);
-				
+				tile.ID = 2;
 				this->Bricks.push_back(tile);
 			
 			}
 		
-			else if (tileData[y][x] == 3)//Goal platform	
+			else if (tileData[y][x] == 3)	//player
 			{
 			
-				
+				Character players(true, false, unit_height, unit_width, unit_width*x, unit_height*y);
+				this->player = players;
 			
+			}
+			else if (tileData[y][x] == 4)	//BasicEnemy
+			{
+
+
+
 			}
 		}
 	}

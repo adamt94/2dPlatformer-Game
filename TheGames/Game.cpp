@@ -10,7 +10,7 @@
 #include "GameLevel.h"
 #include <GLFW\glfw3.h>
 using namespace std;
-Character Player = Character(true,true,32.0f,32.0f,70,40);
+Character Player = Character(true, true, 32.0f, 32.0f, 140, 40);
 GameLevel level = GameLevel();
 BasicEnemy Enemy = BasicEnemy(true,true,32.0f,32.0f,240,40);
 const GLfloat resistance = 02.0f;

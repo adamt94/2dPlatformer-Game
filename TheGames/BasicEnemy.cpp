@@ -4,7 +4,7 @@
 BasicEnemy::BasicEnemy(){};
 BasicEnemy::BasicEnemy(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint width, GLfloat xpos, GLfloat ypos)
            :GameObject(IsSolid, Destroyed, height, width, xpos, ypos){
-
+	ID = 4;//enemy ID
 	xVelocity = 0.0f;
 	yVelocity = 0.0f;
 	dead = false;

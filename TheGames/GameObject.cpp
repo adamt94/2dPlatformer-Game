@@ -7,6 +7,7 @@
 
 GameObject::GameObject(){}
 GameObject::GameObject(GLboolean isSolid, GLboolean destroyed, GLint height, GLint width, GLfloat xpos, GLfloat ypos){
+	
 	IsSolid = isSolid;
 	Destroyed = destroyed;
 	Height = height;
