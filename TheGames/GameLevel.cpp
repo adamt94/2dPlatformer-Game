@@ -39,9 +39,15 @@ void GameLevel::Load(const char *file, GLuint levelWidth, GLuint levelHeight)
 }
 void GameLevel::Draw(){
 	for (GameObject &tile : this->Bricks){
-		if (!tile.Destroyed&&tile.ID==1)
-		{
+		if (tile.ID==1)
 			glBindTexture(GL_TEXTURE_2D, myTexture);
+		else if (tile.ID == 2)
+		{
+			glBindTexture(GL_TEXTURE_2D, goaltexture);
+		}
+		if (!tile.Destroyed)
+		{
+		
 			glPushMatrix();
 			glColor3f(0.0f,1.0f,0.0f);
 			glBegin(GL_QUADS);
@@ -95,7 +101,7 @@ void GameLevel::init(std::vector<std::vector<GLuint>> tileData, GLuint levelWidt
 			else if (tileData[y][x] == 2)	//Goal platform
 			{
 			
-				GameObject tile(true, false, unit_height, unit_width, unit_width*x, unit_height*y);
+				GameObject tile(false, false, unit_height, unit_width, unit_width*x, unit_height*y);
 				tile.ID = 2;
 				this->Bricks.push_back(tile);
 			
@@ -104,8 +110,9 @@ void GameLevel::init(std::vector<std::vector<GLuint>> tileData, GLuint levelWidt
 			else if (tileData[y][x] == 3)	//player
 			{
 			
-				Character players(true, false, unit_height, unit_width, unit_width*x, unit_height*y);
-				this->player = players;
+				//Character players(true, false, unit_height, unit_width, unit_width*x, unit_height*y);
+				Playerxpos = unit_width*x;
+				Playerypos = unit_height*y;
 			
 			}
 			else if (tileData[y][x] == 4)	//BasicEnemy

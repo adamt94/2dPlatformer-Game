@@ -28,11 +28,14 @@ void Game::Init(){
 	level.Load("lvltest.txt",1000 , 600);	
 	Player.myTexture = Player.loadPNG("characterstandingpos.png");
 	level.myTexture = level.loadPNG("platform.png");
+	level.goaltexture = level.loadPNG("door.png");
 	Background = level.loadPNG("gamebackground.png");
 	Player.leftpos = Player.loadPNG("characterstandingpos(left).png");
 	Player.jetpackTexture = Player.loadPNG("characterstandingpos(jetpack).png");
 	Player.jetpackTexutureleft = Player.loadPNG("characterstandingpos(jetpackleft).png");
 	Enemy.texture = Enemy.loadPNG("enemy.png");
+	Player.Xpos = level.Playerxpos;//set the players coords on level design
+	Player.Ypos = level.Playerypos;
    
 }
 
@@ -157,6 +160,7 @@ void Game::Render(){
 }
 
 void Game::ResetLevel(){
+
 	 Player = Character(true, true, 32.0f, 32.0f, 70, 40);
 	 Enemy = BasicEnemy(true, true, 32.0f, 32.0f, 240, 40);
 	 level = GameLevel();
@@ -165,7 +169,9 @@ void Game::ResetLevel(){
 }
 void Game::DoCollision(){
 	GLboolean checkJump;
+	GLboolean goal = false;
 	for (GameObject &tile : level.Bricks){
+		
 		if (Enemy.checkCollision(Enemy, tile) == true)
 
 		{
@@ -178,28 +184,34 @@ void Game::DoCollision(){
 		}
 		if (Player.checkCollision(Player, tile) == true)//if there was a collison
 		{
-				
-			    vector<GLfloat> mtd = CalculateMinTrasnlation(tile,Player,TRUE);
-				
+			if (tile.IsSolid)
+			{
+
+				vector<GLfloat> mtd = CalculateMinTrasnlation(tile, Player, TRUE);
+
 				Player.Ypos += mtd[1];
 				Player.Xpos += mtd[0];
 				if (mtd[0] != 0)
 				{
 					Player.xVelocity = -Player.xVelocity; //* creates a bounce when thers a collision in x axis
-					}
+				}
 				else if (mtd[1] != 0)
 				{
-					Player.yVelocity = -Player.yVelocity/4;//* creates a bounce when thers a collision in y axis
+					Player.yVelocity = -Player.yVelocity / 4;//* creates a bounce when thers a collision in y axis
 				}
-
-
+			}
+		
+			if (tile.ID == 2)
+				goal = true;// reached the goal of the level
 				
 		}
-	
+
 
 	
 
 	}
+	if (goal)
+		ResetLevel();
 	if (Player.checkCollision(Player, Enemy) == true&&Enemy.dead==false)
 	{
 		PlayerEnemyCollision(Player, Enemy);
@@ -235,6 +247,7 @@ void Game::drawBackground(){
 }
 
 vector<GLfloat> Game::CalculateMinTrasnlation(GameObject tile, GameObject player, GLboolean isPlayer){
+	
 	vector<GLfloat> mtd(2);
 	GLfloat left = tile.Xpos - (player.Xpos + player.Width);
 	GLfloat right = (tile.Xpos + tile.Width) - player.Xpos;
@@ -242,50 +255,52 @@ vector<GLfloat> Game::CalculateMinTrasnlation(GameObject tile, GameObject player
 	GLfloat bottom = (tile.Ypos + tile.Width) - player.Ypos;
 	GLfloat mtdX;//minmun translation distance
 	GLfloat mtdY;
+	
 
-	//Player.jump = false;
-	//calulcate the mtd of the axis
-	if (abs(left)<right)
-	{
-
-		mtdX = left;
-
-	}
-	else {
-
-		mtdX = right;
-	}
-	//calculate the mtd of the y axis
-	if (abs(top)< bottom)
-	{
-
-		mtdY = top;
-	}
-	else{
-		mtdY = bottom;
-		if (isPlayer&&(mtdY<mtdX))//check if it wasnt a horizontal collision
+		//Player.jump = false;
+		//calulcate the mtd of the axis
+		if (abs(left) < right)
 		{
 
-			Player.jump = true;// when on the bottom enable jump
-			Player.upintheair = false; //upon landing, reset to false
-			Player.DoubleJumpReady = true; //upon landing, reset to true
-			Player.Doublejump = false;//end of double jump so can change texture
+			mtdX = left;
+
 		}
-		
-	}
-	//assign  the largest mtd to 0 so player is moved the mtd on collision
-	if (abs(mtdX) < abs(mtdY))
-	{
+		else {
 
-		mtdY = 0;
-	}
-	else{
+			mtdX = right;
+		}
+		//calculate the mtd of the y axis
+		if (abs(top) < bottom)
+		{
 
-		mtdX = 0;
-	}
-	mtd[0] = mtdX;
-	mtd[1] = mtdY;
-	return mtd;
+			mtdY = top;
+		}
+		else{
+			mtdY = bottom;
+			if (isPlayer && (mtdY < mtdX))//check if it wasnt a horizontal collision
+			{
+
+				Player.jump = true;// when on the bottom enable jump
+				Player.upintheair = false; //upon landing, reset to false
+				Player.DoubleJumpReady = true; //upon landing, reset to true
+				Player.Doublejump = false;//end of double jump so can change texture
+			}
+
+		}
+		//assign  the largest mtd to 0 so player is moved the mtd on collision
+		if (abs(mtdX) < abs(mtdY))
+		{
+
+			mtdY = 0;
+		}
+		else{
+
+			mtdX = 0;
+		}
+		mtd[0] = mtdX;
+		mtd[1] = mtdY;
+		return mtd;
+	
 }
 
 void Game::PlayerEnemyCollision(GameObject player, GameObject enemy){

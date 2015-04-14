@@ -4,7 +4,8 @@
 class GameLevel : public GameObject
 {
 public:
-	GLuint myTexture ;
+	GLuint myTexture,goaltexture ;
+	GLfloat Playerxpos, Playerypos; // the players starting position on the level
     // Level state
     std::vector<GameObject> Bricks;//platforms
     // Constructor
