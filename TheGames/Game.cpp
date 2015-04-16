@@ -13,21 +13,31 @@ using namespace std;
 Character Player = Character(true, true, 32.0f, 32.0f, 140, 40);
 GameLevel level = GameLevel();
 BasicEnemy Enemy = BasicEnemy(true,true,32.0f,32.0f,240,40);
-const GLfloat resistance = 02.0f;
-const GLfloat gravity = -1.15f;
+const GLfloat resistance = 01.8f;
+const GLfloat gravity = -490.5f;
+int levelcount = 0;
 using namespace freetype;
 font_data our_font;
 Game::Game(GLuint width, GLuint height)
 : State(GAME_ACTIVE), Keys(), Width(width), Height(height)
 {
-
+	
 }
 
 void Game::Init(){
+
 	our_font.init("BKANT.TTF", 22);
-	level.Load("lvltest.txt",1000 , 600);	
+	if (levelcount == 0)
+	{
+
+		level.Load("lvltest.txt", 1000, 600);
+	}
+	else if (levelcount==1){
+		level.Load("lvl2.txt", 1000, 600);
+	}
 	Player.myTexture = Player.loadPNG("characterstandingpos.png");
 	level.myTexture = level.loadPNG("platform.png");
+	level.collectabletexture = level.loadPNG("collectable.png");
 	level.goaltexture = level.loadPNG("door.png");
 	Background = level.loadPNG("gamebackground.png");
 	Player.leftpos = Player.loadPNG("characterstandingpos(left).png");
@@ -36,7 +46,7 @@ void Game::Init(){
 	Enemy.texture = Enemy.loadPNG("enemy.png");
 	Player.Xpos = level.Playerxpos;//set the players coords on level design
 	Player.Ypos = level.Playerypos;
-   
+	
 }
 
 
@@ -47,7 +57,7 @@ void Game::ProcessInput(GLfloat dt){
 		{
 	
 			
-				Player.Up();
+				Player.Up(dt);
 			
 	
 			
@@ -81,40 +91,41 @@ void Game::Update(GLfloat dt){
 	{
 		ResetLevel();
 	}
-	if(Player.yVelocity>-500.0f)//max acceleration downwards
+//	if(Player.yVelocity>-500.0f)//max acceleration downwards
 	{
-	   Player.yVelocity  +=gravity;//apply gravity
-	}
-	if (Enemy.yVelocity>-500.0f)//max acceleration downwards
-	{
-		Enemy.yVelocity += gravity;//apply gravity
+		Player.yVelocity -= (gravity*-dt);//apply gravity
 	}
 	
-	//adds resistance to slow character down
+		Enemy.yVelocity -= (gravity*-dt);//apply gravity
+	
+		
+	//adds resistance to deccelarate character down when let go of movement
 	if(Player.xVelocity>1){
 		Player.xVelocity -= resistance;
 	}
 	else if(Player.xVelocity<-1){
 		
-		Player.xVelocity += resistance;
+		Player.xVelocity +=  resistance;
 	}
 	else{
 		Player.xVelocity = 0;
 	}
-	if(Player.yVelocity>1){
-		Player.yVelocity -= resistance;
+	//max movement speed
+	if (Player.xVelocity>180)
+	{
+		Player.xVelocity = 180.0f;
 	}
-	if(Player.yVelocity<-1){
-		//Player.yVelocity += resistance;
+	if (Player.xVelocity<-180)
+	{
+		Player.xVelocity = -180.0f;
 	}
-	
 	//update player position
 	Player.Xpos += Player.xVelocity*dt;
 	Player.Ypos += (Player.yVelocity*dt);
 	//update enemys positions
 	Enemy.Xpos += Enemy.xVelocity*dt;
 	Enemy.Ypos += (Enemy.yVelocity*dt);
-	
+	cout << Player.xVelocity << endl;
 	
 
 }
@@ -123,7 +134,7 @@ void Game::Render(){
 		glClear(GL_COLOR_BUFFER_BIT);
 		drawBackground();
 		glLoadIdentity();
-		print(our_font,790.0, 570.0, "Score:%7.2f",Player.xVelocity);
+		print(our_font,790.0, 570.0, "Score:%d",Player.Score);
 		//camera follows player
 		if (-(Player.Xpos) + 500 < 0 )
 		{
@@ -170,6 +181,7 @@ void Game::ResetLevel(){
 void Game::DoCollision(){
 	GLboolean checkJump;
 	GLboolean goal = false;
+
 	for (GameObject &tile : level.Bricks){
 		
 		if (Enemy.checkCollision(Enemy, tile) == true)
@@ -180,6 +192,14 @@ void Game::DoCollision(){
 
 			Enemy.Ypos += mtd[1];
 			Enemy.Xpos += mtd[0];
+			if (mtd[0] != 0)
+			{
+				Enemy.xVelocity = -Enemy.xVelocity; //* creates a bounce when thers a collision in x axis
+			}
+			else if (mtd[1] != 0)
+			{
+				Enemy.yVelocity = -Enemy.yVelocity / 4;//* creates a bounce when thers a collision in y axis
+			}
 
 		}
 		if (Player.checkCollision(Player, tile) == true)//if there was a collison
@@ -202,19 +222,32 @@ void Game::DoCollision(){
 			}
 		
 			if (tile.ID == 2)
+			{
+				levelcount++;
+				cout << levelcount << "Banter"<<endl;
 				goal = true;// reached the goal of the level
+			}
+			if (tile.ID == 5)
+			{
+				if (tile.Destroyed == false)
+				{
+
+					Player.Score += 10;// add to player score and destroy the tile
+				}
+				tile.Destroyed = true;
+			}
 				
 		}
 
-
+		
 	
 
 	}
 	if (goal)
-		ResetLevel();
+		ResetLevel();//if player reacher goal
 	if (Player.checkCollision(Player, Enemy) == true&&Enemy.dead==false)
 	{
-		PlayerEnemyCollision(Player, Enemy);
+		PlayerEnemyCollision(Player, Enemy);//check if player collide with enemy and resolve it
 	}
 
 }

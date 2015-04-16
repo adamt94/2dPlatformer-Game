@@ -28,6 +28,8 @@ GLboolean GameObject::checkCollision(GameObject a, GameObject b){
 
 GLuint GameObject::loadPNG(char* name)
 {
+
+
 	nv::Image img;
 
 	GLuint myTextureID;

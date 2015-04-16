@@ -17,6 +17,7 @@ public:
 	GLuint leftpos ;
 	GLuint jetpackTexture ;
 	GLuint jetpackTexutureleft ;
+	GLuint Score;
 	
 	//constructer
 	Character();
@@ -27,7 +28,7 @@ public:
 	void Remove();
 	void Left();
 	void Right();
-	void Up();
+	void Up(GLfloat dt);
 	void Down();
 	
 

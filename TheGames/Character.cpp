@@ -17,6 +17,7 @@ Character::Character(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint
 	yVelocity = 0.0f;
 	jump = false;
 	glClearColor(0.0, 0.0, 0.0, 0.0);
+	Score = 0;
 
 
 	
@@ -69,12 +70,15 @@ void Character::draw(){
 	
 	
 }
-void Character::Up(){
-	
+void Character::Up(GLfloat dt){
+	int jumpheight = Ypos;
 	if (upintheair&&DoubleJumpReady&&yVelocity<10.0f)
 	{
 		Doublejump = true;
-		yVelocity = 1000.0f;
+		
+			 
+			yVelocity = 300.0f;
+	
 		DoubleJumpReady = false;
 	}
 
@@ -82,8 +86,11 @@ void Character::Up(){
 	{
 	   jump = false;
 	 
+	  
+	  
 		  
-			  yVelocity = 800.2f;
+		   yVelocity = 200.0f;
+	   
 			  upintheair = true;
 	}
 	

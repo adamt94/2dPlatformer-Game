@@ -45,11 +45,16 @@ void GameLevel::Draw(){
 		{
 			glBindTexture(GL_TEXTURE_2D, goaltexture);
 		}
+		else if (tile.ID == 5)
+		{
+			glBindTexture(GL_TEXTURE_2D, collectabletexture);
+		}
 		if (!tile.Destroyed)
 		{
-		
+			glEnable(GL_BLEND);// enable transparency
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glPushMatrix();
-			glColor3f(0.0f,1.0f,0.0f);
+			glColor4f(1.0, 0.0, 0.0, 0.0); //set square to transparent
 			glBegin(GL_QUADS);
 			glVertex3f(tile.Xpos,tile.Ypos,0.0);
 			glVertex3f(tile.Xpos+tile.Width,tile.Ypos,0.0);
@@ -120,6 +125,12 @@ void GameLevel::init(std::vector<std::vector<GLuint>> tileData, GLuint levelWidt
 
 
 
+			}
+			else if (tileData[y][x] == 5)//collectable
+			{
+				GameObject collectable(false, false, unit_height, unit_width, unit_width*x, unit_height*y);
+				collectable.ID = 5;
+				this->Bricks.push_back(collectable);
 			}
 		}
 	}
