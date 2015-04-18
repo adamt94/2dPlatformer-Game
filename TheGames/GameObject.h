@@ -26,6 +26,7 @@ public:
 	GLint		Height;
 	GLint		Width;
 	GLint		ID;
+	GLint		movelength;
 	GLfloat     Xpos;
 	GLfloat		Ypos;
 	GLboolean	remove;

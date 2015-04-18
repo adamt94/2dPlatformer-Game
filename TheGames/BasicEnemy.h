@@ -2,10 +2,10 @@
 
 #include "GameObject.h"
 
-
+const GLfloat  emaxSpeed = 100.0f;
 class BasicEnemy : public GameObject {
 public:
-	std::vector<BasicEnemy> Enemies;
+	std::vector<BasicEnemy> enemies;
 	GLuint texture ;
 	GLboolean dead;
 	BasicEnemy();
@@ -13,5 +13,9 @@ public:
 	void Draw();
 	void remove();
 	void PlayerCollision(GameObject player,BasicEnemy enemy);
+	void Right();
+	void Left();
+	void addEnemy(GLfloat Xpos, GLfloat Ypos);
+
 
 };

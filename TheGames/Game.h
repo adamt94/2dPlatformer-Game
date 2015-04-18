@@ -2,6 +2,7 @@
 #define GAME_H
 #include <vector>
 #include <glew.h>
+
 #include "GameObject.h"
 #include <GLFW\glfw3.h>
 
@@ -38,7 +39,7 @@ public:
 	void drawBackground();
 	void NextLevel();
 	std::vector<GLfloat> CalculateMinTrasnlation(GameObject tile,GameObject Player, GLboolean isPlayer);//boolean checks if its player to enable jumping
-	void PlayerEnemyCollision(GameObject player, GameObject enemy);//collision resolution for player and enemy
+	GLboolean PlayerEnemyCollision(GameObject player, GameObject enemy);//collision resolution for player and enemy
 	
 };
 #endif

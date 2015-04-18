@@ -12,9 +12,12 @@
 using namespace std;
 Character Player = Character(true, true, 32.0f, 32.0f, 140, 40);
 GameLevel level = GameLevel();
-BasicEnemy Enemy = BasicEnemy(true,true,32.0f,32.0f,240,40);
+BasicEnemy Enemy = BasicEnemy();
+//BasicEnemy Enemy = BasicEnemy(true,true,32.0f,32.0f,240,40);
+
 const GLfloat resistance = 01.8f;
 const GLfloat gravity = -490.5f;
+GLboolean movingtile = false;//For keeping player on moving platform
 int levelcount = 0;
 using namespace freetype;
 font_data our_font;
@@ -26,7 +29,7 @@ Game::Game(GLuint width, GLuint height)
 
 void Game::Init(){
 
-	our_font.init("BKANT.TTF", 22);
+	our_font.init("kenvector_future.ttf", 22);
 	if (levelcount == 0)
 	{
 
@@ -35,8 +38,16 @@ void Game::Init(){
 	else if (levelcount==1){
 		level.Load("lvl2.txt", 1000, 600);
 	}
+	for (GameObject a : level.enemiespos)
+	{
+
+		Enemy.addEnemy(a.Xpos,a.Ypos);
+	}
+	
+
 	Player.myTexture = Player.loadPNG("characterstandingpos.png");
 	level.myTexture = level.loadPNG("platform.png");
+	level.plainTileTexture = level.loadPNG("metalPanel.png");
 	level.collectabletexture = level.loadPNG("collectable.png");
 	level.goaltexture = level.loadPNG("door.png");
 	Background = level.loadPNG("gamebackground.png");
@@ -44,6 +55,7 @@ void Game::Init(){
 	Player.jetpackTexture = Player.loadPNG("characterstandingpos(jetpack).png");
 	Player.jetpackTexutureleft = Player.loadPNG("characterstandingpos(jetpackleft).png");
 	Enemy.texture = Enemy.loadPNG("enemy.png");
+
 	Player.Xpos = level.Playerxpos;//set the players coords on level design
 	Player.Ypos = level.Playerypos;
 	
@@ -95,9 +107,11 @@ void Game::Update(GLfloat dt){
 	{
 		Player.yVelocity -= (gravity*-dt);//apply gravity
 	}
-	
-		Enemy.yVelocity -= (gravity*-dt);//apply gravity
-	
+	for (BasicEnemy &enem : Enemy.enemies)
+	{
+
+		enem.yVelocity -= (gravity*-dt);//apply gravity
+	}
 		
 	//adds resistance to deccelarate character down when let go of movement
 	if(Player.xVelocity>1){
@@ -119,13 +133,40 @@ void Game::Update(GLfloat dt){
 	{
 		Player.xVelocity = -180.0f;
 	}
+	for (BasicEnemy &enem : Enemy.enemies)
+	{
+
+		if (Player.Xpos > enem.Xpos && (Player.Ypos == enem.Ypos))
+		{
+			enem.Right();
+		}
+		else if (Player.Xpos < enem.Xpos&&Player.Ypos == enem.Ypos){
+			enem.Left();
+		}
+		else{
+			enem.xVelocity = 0.0f;
+		}
+	}
 	//update player position
 	Player.Xpos += Player.xVelocity*dt;
 	Player.Ypos += (Player.yVelocity*dt);
 	//update enemys positions
-	Enemy.Xpos += Enemy.xVelocity*dt;
-	Enemy.Ypos += (Enemy.yVelocity*dt);
-	cout << Player.xVelocity << endl;
+	for (BasicEnemy &enem : Enemy.enemies)
+	{
+
+		enem.Xpos += enem.xVelocity*dt;
+		enem.Ypos += (enem.yVelocity*dt);
+	}
+	for (GameObject &tile : level.Bricks)//update moving tiles positions
+	{
+		if (tile.ID == 7||tile.ID == 8)
+		{
+		
+		     tile.Xpos += tile.xVelocity *dt;
+			 tile.Ypos += tile.yVelocity*dt;
+			
+		}
+	}
 	
 
 }
@@ -134,30 +175,34 @@ void Game::Render(){
 		glClear(GL_COLOR_BUFFER_BIT);
 		drawBackground();
 		glLoadIdentity();
-		print(our_font,790.0, 570.0, "Score:%d",Player.Score);
+		print(our_font, 790.0, 570.0, "Score:%d", Player.Score);
 		//camera follows player
-		if (-(Player.Xpos) + 500 < 0 )
+		if (-(Player.Xpos) + 500 < 0)
 		{
 
-		
+
 			glTranslatef(-(Player.Xpos) + 500, 0.0, 0.0);
 		}
 		if (-(Player.Ypos) + 250 < 0)
 		{
-		
-			glTranslatef(0.0, -(Player.Ypos)+250, 0.0);
+
+			glTranslatef(0.0, -(Player.Ypos) + 250, 0.0);
 		}
-		 
-		 //check collisions
-		 DoCollision();
-		  level.Draw();
+
+		//check collisions
+		DoCollision();
+		level.Draw();
 		//draw the objects to screen
 		Player.draw();
-		if (Enemy.dead == false)
+		for (BasicEnemy &enem : Enemy.enemies)
+		{
+		if (enem.dead == false)
 		{
 
 			Enemy.Draw();
+
 		}
+	}
 	
 	//	glLoadIdentity();
 		
@@ -173,7 +218,7 @@ void Game::Render(){
 void Game::ResetLevel(){
 
 	 Player = Character(true, true, 32.0f, 32.0f, 70, 40);
-	 Enemy = BasicEnemy(true, true, 32.0f, 32.0f, 240, 40);
+	 Enemy.enemies.clear();
 	 level = GameLevel();
 	 Init();
 	//reset level when player loses
@@ -181,75 +226,135 @@ void Game::ResetLevel(){
 void Game::DoCollision(){
 	GLboolean checkJump;
 	GLboolean goal = false;
+	GLboolean Playerdied = false;
 
 	for (GameObject &tile : level.Bricks){
-		
-		if (Enemy.checkCollision(Enemy, tile) == true)
-
+		for (BasicEnemy &enem : Enemy.enemies)
 		{
 
-			vector<GLfloat> mtd = CalculateMinTrasnlation(tile, Enemy, FALSE);
+			if (enem.checkCollision(enem, tile) == true)
 
-			Enemy.Ypos += mtd[1];
-			Enemy.Xpos += mtd[0];
-			if (mtd[0] != 0)
-			{
-				Enemy.xVelocity = -Enemy.xVelocity; //* creates a bounce when thers a collision in x axis
-			}
-			else if (mtd[1] != 0)
-			{
-				Enemy.yVelocity = -Enemy.yVelocity / 4;//* creates a bounce when thers a collision in y axis
-			}
-
-		}
-		if (Player.checkCollision(Player, tile) == true)//if there was a collison
-		{
-			if (tile.IsSolid)
 			{
 
-				vector<GLfloat> mtd = CalculateMinTrasnlation(tile, Player, TRUE);
+				vector<GLfloat> mtd = CalculateMinTrasnlation(tile, enem, FALSE);
 
-				Player.Ypos += mtd[1];
-				Player.Xpos += mtd[0];
+				enem.Ypos += mtd[1];
+				enem.Xpos += mtd[0];
 				if (mtd[0] != 0)
 				{
-					Player.xVelocity = -Player.xVelocity; //* creates a bounce when thers a collision in x axis
+					enem.xVelocity = -enem.xVelocity; //* creates a bounce when thers a collision in x axis
 				}
 				else if (mtd[1] != 0)
 				{
-					Player.yVelocity = -Player.yVelocity / 4;//* creates a bounce when thers a collision in y axis
+					enem.yVelocity = -enem.yVelocity / 4;//* creates a bounce when thers a collision in y axis
 				}
+
 			}
-		
-			if (tile.ID == 2)
+			if (Player.checkCollision(Player, tile) == true)//if there was a collison
 			{
-				levelcount++;
-				cout << levelcount << "Banter"<<endl;
-				goal = true;// reached the goal of the level
-			}
-			if (tile.ID == 5)
-			{
-				if (tile.Destroyed == false)
+				if (tile.IsSolid)
 				{
 
-					Player.Score += 10;// add to player score and destroy the tile
+					vector<GLfloat> mtd = CalculateMinTrasnlation(tile, Player, TRUE);
+
+					Player.Ypos += mtd[1];
+					Player.Xpos += mtd[0];
+					if (mtd[0] != 0)
+					{
+						Player.xVelocity = -Player.xVelocity; //* creates a bounce when thers a collision in x axis
+					}
+					else if (mtd[1] != 0)
+					{
+						Player.yVelocity = -Player.yVelocity / 4;//* creates a bounce when thers a collision in y axis
+					}
 				}
-				tile.Destroyed = true;
+
+				if (tile.ID == 2)
+				{
+					levelcount++;
+
+					goal = true;// reached the goal of the level
+				}
+				if (tile.ID == 5)
+				{
+					if (tile.Destroyed == false)
+					{
+
+						Player.Score += 10;// add to player score and destroy the tile
+					}
+					tile.Destroyed = true;
+				}
+				if (tile.ID == 7)
+				{
+
+					if (Player.xVelocity < 100.0f)//if player is less then platform speed
+					{
+
+
+						Player.xVelocity = tile.xVelocity; // match player velocity with tile to keep on platform
+					}
+
+
+
+				}
+
 			}
+
+			if (tile.ID == 7)
+			{
+
+				if (tile.movelength >= tile.Xpos && tile.movelength<tile.Xpos + 1)
+				{
+					tile.xVelocity = 100.0f;
+				}
+				if (tile.Xpos > tile.movelength + 300)
+				{
+
+					tile.xVelocity = -100.0f;
+				}
+
+
+			}
+			if (tile.ID == 8)
+			{
+
+				if (tile.movelength >= tile.Ypos && tile.movelength<tile.Ypos + 1)
+				{
+					tile.yVelocity = 100.0f;
+				}
+				if (tile.Ypos > tile.movelength + 300)
+				{
+
+					tile.yVelocity = -100.0f;
+				}
+
+
+			}
+
+
+
+
+
+			
+			if (Player.checkCollision(Player, enem) == true && enem.dead == false)
+			{
+			
+				if (PlayerEnemyCollision(Player, enem)==false)
+				{
+					enem.dead = true;
+				}
 				
+				else {
+					Playerdied = true;
+				}
+				
+				
+				// check if player collide with enemy and resolve it
+			}
 		}
-
-		
-	
-
 	}
-	if (goal)
+	if (goal||Playerdied)
 		ResetLevel();//if player reacher goal
-	if (Player.checkCollision(Player, Enemy) == true&&Enemy.dead==false)
-	{
-		PlayerEnemyCollision(Player, Enemy);//check if player collide with enemy and resolve it
-	}
-
 }
 
 void Game::drawBackground(){
@@ -336,7 +441,7 @@ vector<GLfloat> Game::CalculateMinTrasnlation(GameObject tile, GameObject player
 	
 }
 
-void Game::PlayerEnemyCollision(GameObject player, GameObject enemy){
+GLboolean Game::PlayerEnemyCollision(GameObject player, GameObject enemy){
 	GLfloat left = player.Xpos - (enemy.Xpos + enemy.Width);
 	GLfloat right = (player.Xpos + player.Width) - enemy.Xpos;
 	GLfloat top = player.Ypos - (enemy.Ypos + enemy.Height);
@@ -380,11 +485,13 @@ void Game::PlayerEnemyCollision(GameObject player, GameObject enemy){
 	}
 	if (mtdY != 0)
 	{
+		cout << "BANTERMAN" << endl;
 		Player.yVelocity = -Player.yVelocity;//* jumping on enemy head bounce
-		Enemy.dead = true;
+		
+		return false;
 	}
 	else{
-		ResetLevel();//player dies to enemy restart level
+		return true;//player dies to enemy restart level
 	}
 	
 

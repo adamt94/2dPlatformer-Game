@@ -49,6 +49,10 @@ void GameLevel::Draw(){
 		{
 			glBindTexture(GL_TEXTURE_2D, collectabletexture);
 		}
+		else if (tile.ID == 6)
+		{
+			glBindTexture(GL_TEXTURE_2D, plainTileTexture);
+		}
 		if (!tile.Destroyed)
 		{
 			glEnable(GL_BLEND);// enable transparency
@@ -122,8 +126,8 @@ void GameLevel::init(std::vector<std::vector<GLuint>> tileData, GLuint levelWidt
 			}
 			else if (tileData[y][x] == 4)	//BasicEnemy
 			{
-
-
+				GameObject enemy(false, false, unit_height, unit_width, unit_width*x, unit_height*y);
+				this->enemiespos.push_back(enemy);
 
 			}
 			else if (tileData[y][x] == 5)//collectable
@@ -131,6 +135,27 @@ void GameLevel::init(std::vector<std::vector<GLuint>> tileData, GLuint levelWidt
 				GameObject collectable(false, false, unit_height, unit_width, unit_width*x, unit_height*y);
 				collectable.ID = 5;
 				this->Bricks.push_back(collectable);
+			}
+			else if (tileData[y][x] == 6)//plain tile
+			{
+				GameObject tile(true, false, unit_height, unit_width, unit_width*x, unit_height*y);
+				tile.ID = 6;//ID for a standard tile
+			
+				this->Bricks.push_back(tile);
+			}
+			else if (tileData[y][x] == 7)//moving tile in x direction
+			{
+				GameObject tile(true, false, unit_height, unit_width, unit_width*x, unit_height*y);
+				tile.ID = 7;
+				tile.movelength = (unit_width*x);
+				this->Bricks.push_back(tile);
+			}
+			else if (tileData[y][x] == 8)//moving tile in y direction
+			{
+				GameObject tile(true, false, unit_height, unit_width, unit_width*x, unit_height*y);
+				tile.ID = 8;
+				tile.movelength = (unit_height*y);
+				this->Bricks.push_back(tile);
 			}
 		}
 	}

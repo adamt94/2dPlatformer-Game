@@ -4,10 +4,11 @@
 class GameLevel : public GameObject
 {
 public:
-	GLuint myTexture,goaltexture, collectabletexture, levelcounts;
+	GLuint myTexture,goaltexture, collectabletexture,plainTileTexture, levelcounts;
 	GLfloat Playerxpos, Playerypos; // the players starting position on the level
     // Level state
     std::vector<GameObject> Bricks;//platforms
+	std::vector<GameObject> enemiespos; //contain all the positions of the enemys from the txt file
     // Constructor
 	GameObject player;//object for player starting position on level
     GameLevel() { }
