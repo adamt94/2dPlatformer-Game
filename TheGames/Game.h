@@ -21,7 +21,7 @@ public:
 	GLboolean	Keys[1024];
 	GLboolean   KeysProcessed[1024];
 	GLuint		Width, Height;
-	GLuint Background ;
+	GLuint Background, Background2,Background3 ;
 	GLint		levelcounter;//counter of each level
 	// Constructor/Destructor
 	Game(GLuint width, GLuint height);
@@ -40,6 +40,7 @@ public:
 	void NextLevel();
 	std::vector<GLfloat> CalculateMinTrasnlation(GameObject tile,GameObject Player, GLboolean isPlayer);//boolean checks if its player to enable jumping
 	GLboolean PlayerEnemyCollision(GameObject player, GameObject enemy);//collision resolution for player and enemy
+	void GameLevelAlgorithm(GLint width, GLint height);
 	
 };
 #endif

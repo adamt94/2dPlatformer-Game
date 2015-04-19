@@ -140,7 +140,7 @@ void GameLevel::init(std::vector<std::vector<GLuint>> tileData, GLuint levelWidt
 			{
 				GameObject tile(true, false, unit_height, unit_width, unit_width*x, unit_height*y);
 				tile.ID = 6;//ID for a standard tile
-			
+				cout << "BANTER TILE" << endl;
 				this->Bricks.push_back(tile);
 			}
 			else if (tileData[y][x] == 7)//moving tile in x direction

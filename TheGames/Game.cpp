@@ -9,12 +9,16 @@
 #include "FreeType.h"
 #include "GameLevel.h"
 #include <GLFW\glfw3.h>
+#include <iostream>
+#include <fstream>
 using namespace std;
-Character Player = Character(true, true, 32.0f, 32.0f, 140, 40);
+Character Player = Character(true, true, 26.0f, 26, 140, 40);
 GameLevel level = GameLevel();
 BasicEnemy Enemy = BasicEnemy();
 //BasicEnemy Enemy = BasicEnemy(true,true,32.0f,32.0f,240,40);
-
+int random;
+int random2;
+int random3;
 const GLfloat resistance = 01.8f;
 const GLfloat gravity = -490.5f;
 GLboolean movingtile = false;//For keeping player on moving platform
@@ -28,29 +32,45 @@ Game::Game(GLuint width, GLuint height)
 }
 
 void Game::Init(){
-
+	GameLevelAlgorithm(10, 10);
+	random = rand() % 3 + 1;
+	random2 = rand() % 3 + 1;
+	random3 = rand() % 3 + 1;
+	
+	cout << "levelcount " << levelcount << endl;
 	our_font.init("kenvector_future.ttf", 22);
 	if (levelcount == 0)
 	{
-
+		cout << "SHOULD LOAD THIS" << endl;
 		level.Load("lvltest.txt", 1000, 600);
 	}
 	else if (levelcount==1){
+		cout << "SHOULD LOAD NO" << endl;
 		level.Load("lvl2.txt", 1000, 600);
 	}
+	
 	for (GameObject a : level.enemiespos)
 	{
 
 		Enemy.addEnemy(a.Xpos,a.Ypos);
 	}
 	
-
-	Player.myTexture = Player.loadPNG("characterstandingpos.png");
-	level.myTexture = level.loadPNG("platform.png");
-	level.plainTileTexture = level.loadPNG("metalPanel.png");
-	level.collectabletexture = level.loadPNG("collectable.png");
-	level.goaltexture = level.loadPNG("door.png");
-	Background = level.loadPNG("gamebackground.png");
+	//creates random background from 3 textures
+	
+		Background = level.loadPNG("gamebackground.png");
+	
+	
+		Background2 = level.loadPNG("gamebackground2.png");
+	
+	
+		Background3 = level.loadPNG("gamebackground3.png");
+	
+	Player.myTexture = Player.loadPNG("characterstandingpos.png");//player
+	level.myTexture = level.loadPNG("platform.png");//tile
+	level.plainTileTexture = level.loadPNG("metalPanel.png");//plain tile
+	level.collectabletexture = level.loadPNG("collectable.png");//collectable
+	level.goaltexture = level.loadPNG("door.png");// goal tile
+	
 	Player.leftpos = Player.loadPNG("characterstandingpos(left).png");
 	Player.jetpackTexture = Player.loadPNG("characterstandingpos(jetpack).png");
 	Player.jetpackTexutureleft = Player.loadPNG("characterstandingpos(jetpackleft).png");
@@ -176,7 +196,7 @@ void Game::Render(){
 		drawBackground();
 		glLoadIdentity();
 		print(our_font, 790.0, 570.0, "Score:%d", Player.Score);
-		//camera follows player
+		//camera follows player stops moving if gets to edges of level
 		if (-(Player.Xpos) + 500 < 0)
 		{
 
@@ -187,6 +207,10 @@ void Game::Render(){
 		{
 
 			glTranslatef(0.0, -(Player.Ypos) + 250, 0.0);
+		}
+		if (((Player.Xpos)+500 > 3000))
+		{
+			glTranslatef((Player.Xpos)  -2500,0.0 , 0.0);
 		}
 
 		//check collisions
@@ -216,10 +240,12 @@ void Game::Render(){
 }
 
 void Game::ResetLevel(){
-
-	 Player = Character(true, true, 32.0f, 32.0f, 70, 40);
+	
+	 Player = Character(true, true, 26.0f, 26.0f, 70, 40);
 	 Enemy.enemies.clear();
+	
 	 level = GameLevel();
+	 
 	 Init();
 	//reset level when player loses
 }
@@ -227,11 +253,15 @@ void Game::DoCollision(){
 	GLboolean checkJump;
 	GLboolean goal = false;
 	GLboolean Playerdied = false;
-
+	
 	for (GameObject &tile : level.Bricks){
+
 		for (BasicEnemy &enem : Enemy.enemies)
 		{
-
+			if (tile.ID==5)//collectable
+				break;
+			
+			//cout << "enemy" << enem.Xpos << " tile " << tile.Xpos << endl;
 			if (enem.checkCollision(enem, tile) == true)
 
 			{
@@ -250,8 +280,26 @@ void Game::DoCollision(){
 				}
 
 			}
+			if (Player.checkCollision(Player, enem) == true && enem.dead == false)
+			{
+
+				if (PlayerEnemyCollision(Player, enem) == false)
+				{
+					enem.dead = true;
+				}
+
+				else {
+					Playerdied = true;
+				}
+
+
+				// check if player collide with enemy and resolve it
+			}
+		}
+
 			if (Player.checkCollision(Player, tile) == true)//if there was a collison
 			{
+
 				if (tile.IsSolid)
 				{
 
@@ -271,7 +319,7 @@ void Game::DoCollision(){
 
 				if (tile.ID == 2)
 				{
-					levelcount++;
+
 
 					goal = true;// reached the goal of the level
 				}
@@ -335,38 +383,43 @@ void Game::DoCollision(){
 
 
 
-			
-			if (Player.checkCollision(Player, enem) == true && enem.dead == false)
-			{
-			
-				if (PlayerEnemyCollision(Player, enem)==false)
-				{
-					enem.dead = true;
-				}
-				
-				else {
-					Playerdied = true;
-				}
-				
-				
-				// check if player collide with enemy and resolve it
-			}
-		}
+
+		
+		
+
 	}
-	if (goal||Playerdied)
+	if (Playerdied)
 		ResetLevel();//if player reacher goal
+	else if (goal)
+	{
+
+		levelcount++;
+		ResetLevel();
+	}
 }
 
 void Game::drawBackground(){
-	glBindTexture(GL_TEXTURE_2D, Background);
+	//get 3 different random numbers to generate a random texture of the 3 and repeats this 3 times 
+	if (random == 1)
+	{
+
+		glBindTexture(GL_TEXTURE_2D, Background);
+	}
+	else if (random == 2){
+		glBindTexture(GL_TEXTURE_2D, Background2);
+	}
+	else{
+		glBindTexture(GL_TEXTURE_2D, Background3);
+	}//creates random background texture
+	
 	glPushMatrix();
 	glEnable(GL_BLEND);// enable transparency
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor4f(1.0, 0.0, 0.0, 0.0); //set square to transparent
 	glBegin(GL_QUADS);
 	glVertex2f(0, 0);
-	glVertex2f(0 + 2000,0);
-	glVertex2f(0 + 2000, 0 + 1200);
+	glVertex2f(0 + 1000,0);
+	glVertex2f(0 + 1000, 0 + 1200);
 	glVertex2f(0, 0 + 1200);
 	glEnd();
 
@@ -375,12 +428,65 @@ void Game::drawBackground(){
 	glColor3f(1, 1, 1);//this becomes transparent
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0, 0.0);	glVertex2f(0, 0);
-	glTexCoord2f(2.0, 0.0); glVertex2f(0 + 2000, 0);
-	glTexCoord2f(2.0, 2.0); glVertex2f(0 + 2000, 0 + 1200);
+	glTexCoord2f(1.0, 0.0); glVertex2f(0 + 1000, 0);
+	glTexCoord2f(1.0, 2.0); glVertex2f(0 + 1000, 0 + 1200);
 	glTexCoord2f(0.0, 2.0); glVertex2f(0, 0 + 1200);
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
+	glPopMatrix();
+	if (random2 == 1)
+	{
+
+		glBindTexture(GL_TEXTURE_2D, Background);
+	}
+	else if (random2 == 2){
+		glBindTexture(GL_TEXTURE_2D, Background2);
+	}
+	else{
+		glBindTexture(GL_TEXTURE_2D, Background3);
+	}//creates random background texture
+	//2nd texture mapping
+	glPopMatrix();
+	glEnable(GL_TEXTURE_2D);
+	glColor3f(1, 1, 1);//this becomes transparent
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0, 0.0);	glVertex2f(1000, 0);
+	glTexCoord2f(1.0, 0.0); glVertex2f(1000 + 1000, 0);
+	glTexCoord2f(1.0, 2.0); glVertex2f(1000 + 1000, 0 + 1200);
+	glTexCoord2f(0.0, 2.0); glVertex2f(1000, 0 + 1200);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glPopMatrix();
+
+		if (random3 == 1)
+	{
+
+		glBindTexture(GL_TEXTURE_2D, Background);
+	}
+	else if (random3 == 2){
+		glBindTexture(GL_TEXTURE_2D, Background2);
+	}
+	else{
+		glBindTexture(GL_TEXTURE_2D, Background3);
+	}//creates random background texture
+
+	//3rd texture mapping
+	glPopMatrix();
+	glEnable(GL_TEXTURE_2D);
+	glColor3f(1, 1, 1);//this becomes transparent
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0, 0.0);	glVertex2f(2000, 0);
+	glTexCoord2f(1.0, 0.0); glVertex2f(2000 + 1000, 0);
+	glTexCoord2f(1.0, 2.0); glVertex2f(2000 + 1000, 0 + 1200);
+	glTexCoord2f(0.0, 2.0); glVertex2f(2000, 0 + 1200);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+	glPopMatrix();
+
+	
 
 }
 
@@ -485,7 +591,7 @@ GLboolean Game::PlayerEnemyCollision(GameObject player, GameObject enemy){
 	}
 	if (mtdY != 0)
 	{
-		cout << "BANTERMAN" << endl;
+		
 		Player.yVelocity = -Player.yVelocity;//* jumping on enemy head bounce
 		
 		return false;
@@ -494,5 +600,133 @@ GLboolean Game::PlayerEnemyCollision(GameObject player, GameObject enemy){
 		return true;//player dies to enemy restart level
 	}
 	
+
+}
+
+
+void Game::GameLevelAlgorithm(GLint width, GLint height){
+	ofstream myfile;
+	GLuint tileData[30][40] = { 0 };
+	int randomnumber = 0;
+	myfile.open("lvl2.txt");
+	//starting platform
+	tileData[0][0] = 1;
+	tileData[0][1] = 1;
+	tileData[0][2] = 1;
+	
+	//player spawn
+	tileData[4][0] = 3;
+	//goal
+
+
+
+
+	for (int i = 0; i < 30; i++)
+	{
+
+		for (int j = 0; j < 40; j++)
+		{
+			
+				//1 in 20 chance to spawn a tile
+				randomnumber = rand()%20 + 1;
+			//cout << randomnumber << endl;
+			if (randomnumber == 1)
+			{
+				tileData[i][j] = 1;
+
+				//give a 50% chance to spawn a tile each side of it
+				randomnumber = rand() % 1;
+				if (randomnumber == 0)
+				{
+					//check its not outside of array
+					if ((j - 1) >= 0)
+					{
+						tileData[i][j - 1] = 1;
+					}
+					randomnumber = rand() % 3;
+					if ((j - 2) >= 0)
+					{
+						tileData[i][j - 2] = 1;
+					}
+				}
+				randomnumber = rand() % 1;
+				if (randomnumber == 0)
+				{
+					//check its not outside of array
+					if ((j + 1) < 40)
+					{
+						tileData[i][j + 1] = 1;
+					}
+				}
+				randomnumber = rand() % 3;
+				if (randomnumber == 0)
+				{
+					//check its not outside of array
+					if ((j + 2) < 40)
+					{
+						tileData[i][j + 2] = 1;
+					}
+					
+				}
+			
+				
+
+				
+				
+			}
+		
+			
+		}
+		
+		
+	}
+	//adding moving platforms
+	for (int i = 0; i < 30; i++)
+	{
+
+		for (int j = 0; j < 40; j++)
+		{
+			
+				if ((i + 1) < 30)
+				{
+					//spawn a plain tile as its under another tile
+					if (tileData[i][j] == 1 && tileData[i + 1][j])
+					{
+						tileData[i][j] = 6;
+					}
+					//spawn enemies
+					
+				}
+				if (tileData[i][j]==0)
+				{
+					//spawn enemy above platform if its a 3 length platform
+					if ((i - 1 > 0 && (j + 1) < 30 && (j - 1) > 0))//check its not out of bounds
+					{
+						if (tileData[i - 1][j - 1] == 1 && tileData[i - 1][j] == 1 && tileData[i - 1][j + 1])
+						{
+							//% chance of spawning
+							randomnumber = rand() % 25;
+							if (randomnumber == 0)
+							{
+
+								tileData[i][j] = 4;
+							}
+						}
+					}
+				}
+		}
+		
+	}
+
+	tileData[29][39] = 2;
+	for (int i = 0; i < 30; i++)
+	{
+
+		for (int j = 0; j < 40; j++)
+		{
+			myfile << tileData[i][j]<<" ";
+		}
+		myfile << "\n";
+	}
 
 }
