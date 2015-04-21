@@ -156,12 +156,20 @@ void Game::Update(GLfloat dt){
 	for (BasicEnemy &enem : Enemy.enemies)
 	{
 
-		if (Player.Xpos > enem.Xpos && (Player.Ypos == enem.Ypos))
+		if (Player.Xpos > enem.Xpos && (Player.Ypos < enem.Ypos+enem.Height&&Player.Ypos>=enem.Ypos))
 		{
-			enem.Right();
+			if (Player.Xpos < enem.Xpos + 192)
+			{
+
+				enem.Right();
+			}
 		}
-		else if (Player.Xpos < enem.Xpos&&Player.Ypos == enem.Ypos){
-			enem.Left();
+		else if (Player.Xpos < enem.Xpos&& (Player.Ypos < enem.Ypos + enem.Height&&Player.Ypos >= enem.Ypos)){
+			if (Player.Xpos>enem.Xpos - 192)//enemys range to move towards player
+			{
+
+				enem.Left();
+			}
 		}
 		else{
 			enem.xVelocity = 0.0f;
@@ -191,6 +199,7 @@ void Game::Update(GLfloat dt){
 
 }
 void Game::Render(){
+	
 	if (this->State == GAME_ACTIVE || this->State == GAME_MENU || this->State == GAME_WIN){
 		glClear(GL_COLOR_BUFFER_BIT);
 		drawBackground();

@@ -66,7 +66,7 @@ void BasicEnemy::Left(){
 void BasicEnemy::addEnemy(GLfloat xpos, GLfloat ypos){
 
 		 BasicEnemy enem(true, true, 32.0f, 32.0f, xpos, ypos);
-		 cout << "BANTER" << endl;
+	
 		 this->enemies.push_back(enem);
 	
 }
