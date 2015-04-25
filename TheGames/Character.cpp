@@ -112,7 +112,7 @@ void Character::Right(){
 	//increases speed until max
 	if(xVelocity<maxSpeed)
 	{
-	  xVelocity+=2.2f;
+	  xVelocity+=4.2f;
 	}
 	
 	
@@ -122,7 +122,7 @@ void Character::Left(){
 	//increases speed until max
 	if(xVelocity>(-maxSpeed))
 	{
-	  xVelocity-=2.2f;
+	  xVelocity-=4.2f;
 	}
 	
 }

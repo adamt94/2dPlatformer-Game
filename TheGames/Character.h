@@ -4,7 +4,7 @@
 
 #include "GameObject.h"
 
-const GLfloat  maxSpeed = 400.0f;
+const GLfloat  maxSpeed = 100.0f;
 const GLfloat maxJump = 800.0f;
 class Character : public GameObject{
 public:

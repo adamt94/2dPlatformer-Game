@@ -16,46 +16,22 @@ Character Player = Character(true, true, 26.0f, 26, 140, 40);
 GameLevel level = GameLevel();
 BasicEnemy Enemy = BasicEnemy();
 //BasicEnemy Enemy = BasicEnemy(true,true,32.0f,32.0f,240,40);
-int random;
-int random2;
-int random3;
-const GLfloat resistance = 01.8f;
+int random, random2, random3;// random generated numbers
+int menucount;
+const GLfloat resistance = 02.8f;
 const GLfloat gravity = -490.5f;
 GLboolean movingtile = false;//For keeping player on moving platform
 int levelcount = 0;
 using namespace freetype;
 font_data our_font;
 Game::Game(GLuint width, GLuint height)
-: State(GAME_ACTIVE), Keys(), Width(width), Height(height)
+	: State(GAME_MENU), Keys(), Width(width), Height(height)
 {
-	
+	menucount = 0;
 }
 
 void Game::Init(){
-	GameLevelAlgorithm(10, 10);
-	random = rand() % 3 + 1;
-	random2 = rand() % 3 + 1;
-	random3 = rand() % 3 + 1;
 	
-	cout << "levelcount " << levelcount << endl;
-	our_font.init("kenvector_future.ttf", 22);
-	if (levelcount == 0)
-	{
-		cout << "SHOULD LOAD THIS" << endl;
-		level.Load("lvltest.txt", 1000, 600);
-	}
-	else if (levelcount==1){
-		cout << "SHOULD LOAD NO" << endl;
-		level.Load("lvl2.txt", 1000, 600);
-	}
-	
-	for (GameObject a : level.enemiespos)
-	{
-
-		Enemy.addEnemy(a.Xpos,a.Ypos);
-	}
-	
-	//creates random background from 3 textures
 	
 		Background = level.loadPNG("gamebackground.png");
 	
@@ -64,7 +40,28 @@ void Game::Init(){
 	
 	
 		Background3 = level.loadPNG("gamebackground3.png");
+	random = rand() % 3 + 1;
+	random2 = rand() % 3 + 1;
+	random3 = rand() % 3 + 1;
 	
+	our_font.init("kenvector_future.ttf", 22);
+	if(this->State == GAME_ACTIVE)
+		{
+	if (levelcount == 0)
+	{
+		
+		level.Load("lvltest.txt", 1000, 600);
+	}
+	else if (levelcount==1){
+	GameLevelAlgorithm(10, 10);
+		level.Load("lvl2.txt", 1000, 600);
+	}
+	
+	
+	
+	//creates random background from 3 textures
+	
+		
 	Player.myTexture = Player.loadPNG("characterstandingpos.png");//player
 	level.myTexture = level.loadPNG("platform.png");//tile
 	level.plainTileTexture = level.loadPNG("metalPanel.png");//plain tile
@@ -78,7 +75,12 @@ void Game::Init(){
 
 	Player.Xpos = level.Playerxpos;//set the players coords on level design
 	Player.Ypos = level.Playerypos;
-	
+	for (GameObject a : level.enemiespos)
+	{
+
+		Enemy.addEnemy(a.Xpos,a.Ypos);
+	}
+		}
 }
 
 
@@ -117,21 +119,50 @@ void Game::ProcessInput(GLfloat dt){
 		
 		
 	}
+	if(this->State == GAME_MENU)
+	{
+		if(this->Keys[GLFW_KEY_ENTER])
+		{
+			if(menucount ==1)
+			{
+	          glfwTerminate();
+	          exit(EXIT_SUCCESS);
+			}
+			if(menucount == 0)
+			{
+				this->State = GAME_ACTIVE;
+				ResetLevel();
+			}
+			
+		}
+		if(this->Keys[GLFW_KEY_UP])
+		{
+			menucount--;
+			
+			if(menucount <0)
+			{
+				menucount =1;
+			}
+		}
+		if(this->Keys[GLFW_KEY_DOWN])
+		{
+			
+			menucount++;
+			if(menucount >1)
+			{
+				menucount = 0;
+			}
+		}
+		
+	}
 }
 void Game::Update(GLfloat dt){
-	if (Player.remove)
-	{
-		ResetLevel();
-	}
+
 //	if(Player.yVelocity>-500.0f)//max acceleration downwards
 	{
 		Player.yVelocity -= (gravity*-dt);//apply gravity
 	}
-	for (BasicEnemy &enem : Enemy.enemies)
-	{
 
-		enem.yVelocity -= (gravity*-dt);//apply gravity
-	}
 		
 	//adds resistance to deccelarate character down when let go of movement
 	if(Player.xVelocity>1){
@@ -155,8 +186,14 @@ void Game::Update(GLfloat dt){
 	}
 	for (BasicEnemy &enem : Enemy.enemies)
 	{
-
-		if (Player.Xpos > enem.Xpos && (Player.Ypos < enem.Ypos+enem.Height&&Player.Ypos>=enem.Ypos))
+		 if  (Player.Xpos < enem.Xpos && (Player.Ypos < enem.Ypos+enem.Height&&Player.Ypos>=enem.Ypos)){
+			if (Player.Xpos>enem.Xpos - 192)//enemys range to move towards player
+			{
+			
+				enem.Left();
+			}
+		}
+		else if (Player.Xpos > enem.Xpos && (Player.Ypos < enem.Ypos+enem.Height&&Player.Ypos>=enem.Ypos))
 		{
 			if (Player.Xpos < enem.Xpos + 192)
 			{
@@ -164,27 +201,21 @@ void Game::Update(GLfloat dt){
 				enem.Right();
 			}
 		}
-		else if (Player.Xpos < enem.Xpos&& (Player.Ypos < enem.Ypos + enem.Height&&Player.Ypos >= enem.Ypos)){
-			if (Player.Xpos>enem.Xpos - 192)//enemys range to move towards player
-			{
-
-				enem.Left();
-			}
-		}
+		
 		else{
-			enem.xVelocity = 0.0f;
+		
+			enem.xVelocity =0.0f;
 		}
+		enem.yVelocity -= (gravity*-dt);//apply gravity
+		enem.Xpos += enem.xVelocity*dt;
+		enem.Ypos += (enem.yVelocity*dt);
 	}
 	//update player position
 	Player.Xpos += Player.xVelocity*dt;
 	Player.Ypos += (Player.yVelocity*dt);
 	//update enemys positions
-	for (BasicEnemy &enem : Enemy.enemies)
-	{
 
-		enem.Xpos += enem.xVelocity*dt;
-		enem.Ypos += (enem.yVelocity*dt);
-	}
+
 	for (GameObject &tile : level.Bricks)//update moving tiles positions
 	{
 		if (tile.ID == 7||tile.ID == 8)
@@ -196,11 +227,15 @@ void Game::Update(GLfloat dt){
 		}
 	}
 	
+  if (Player.remove)
+	{
+		ResetLevel();
+	}
 
 }
 void Game::Render(){
 	
-	if (this->State == GAME_ACTIVE || this->State == GAME_MENU || this->State == GAME_WIN){
+	if (this->State == GAME_ACTIVE || this->State == GAME_WIN){
 		glClear(GL_COLOR_BUFFER_BIT);
 		drawBackground();
 		glLoadIdentity();
@@ -246,6 +281,16 @@ void Game::Render(){
 		glFlush();
 		
 	}
+	if(this->State == GAME_MENU)
+	{
+		glClear(GL_COLOR_BUFFER_BIT);
+		drawBackground();
+		drawMenu();
+		glFlush();
+	}
+	
+
+
 }
 
 void Game::ResetLevel(){
@@ -738,4 +783,39 @@ void Game::GameLevelAlgorithm(GLint width, GLint height){
 		myfile << "\n";
 	}
 
+}
+
+void Game::drawMenu(){
+	
+	glPushMatrix();
+	glTranslatef(400,400,0.0);
+	glColor4f(1.0, 0.0, 0.0, 0.0);
+	if(menucount==0)
+	{
+		glColor4f(0.0, 1.0, 0.0, 0.0);
+	}
+	 //set square to transparent
+	glBegin(GL_QUADS);
+	glVertex2f(0, 0);
+	glVertex2f(0 + 0,100);
+	glVertex2f(0 + 200, 100 + 0.0);
+	glVertex2f(200, 0 + 0);
+	glEnd();
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(400,250,0.0);
+	glColor4f(1.0, 0.0, 0.0, 0.0);
+	if(menucount==1)
+	{
+		glColor4f(0.0, 1.0, 0.0, 0.0);
+	} //set square to transparent
+	glBegin(GL_QUADS);
+	glVertex2f(0, 0);
+	glVertex2f(0 + 0,100);
+	glVertex2f(0 + 200, 100 + 0.0);
+	glVertex2f(200, 0 + 0);
+	glEnd();
+	glPopMatrix();
+
+	
 }

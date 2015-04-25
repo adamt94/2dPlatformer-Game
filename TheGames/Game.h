@@ -41,6 +41,7 @@ public:
 	std::vector<GLfloat> CalculateMinTrasnlation(GameObject tile,GameObject Player, GLboolean isPlayer);//boolean checks if its player to enable jumping
 	GLboolean PlayerEnemyCollision(GameObject player, GameObject enemy);//collision resolution for player and enemy
 	void GameLevelAlgorithm(GLint width, GLint height);
+	void drawMenu();
 	
 };
 #endif
