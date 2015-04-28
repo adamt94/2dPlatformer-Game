@@ -23,6 +23,8 @@ public:
 	GLuint		Width, Height;
 	GLuint Background, Background2,Background3 ;
 	GLint		levelcounter;//counter of each level
+	GLuint play, playselected, help, helpselected, exits, exitselected, back, helpagetex;//textures for menu
+	GLboolean helppage;
 	// Constructor/Destructor
 	Game(GLuint width, GLuint height);
 	//~Game();
@@ -42,6 +44,7 @@ public:
 	GLboolean PlayerEnemyCollision(GameObject player, GameObject enemy);//collision resolution for player and enemy
 	void GameLevelAlgorithm(GLint width, GLint height);
 	void drawMenu();
+	void helpPage();
 	
 };
 #endif

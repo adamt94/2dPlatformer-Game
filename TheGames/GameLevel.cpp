@@ -26,7 +26,7 @@ void GameLevel::Load(const char *file, GLuint levelWidth, GLuint levelHeight)
         {
             std::istringstream sstream(line);
             std::vector<GLuint> row;
-            while (sstream >> tileCode) // Read each word seperated by spaces
+            while (sstream >> tileCode) // Read each number with seperated spaces
                 row.push_back(tileCode);
             tileData.push_back(row);
         }

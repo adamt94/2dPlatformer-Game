@@ -34,12 +34,17 @@ void Game::Init(){
 	
 	
 		Background = level.loadPNG("gamebackground.png");
-	
-	
 		Background2 = level.loadPNG("gamebackground2.png");
-	
-	
 		Background3 = level.loadPNG("gamebackground3.png");
+		//menu textures
+		play = level.loadPNG("play.png");
+		playselected = level.loadPNG("playselected.png");
+		exits = level.loadPNG("menuexit.png");
+		exitselected = level.loadPNG("menuexitselected.png");
+		help = level.loadPNG("menuhelp.png");
+		helpselected = level.loadPNG("menuhelpselected.png");
+		back = level.loadPNG("backselected.png");
+		helpagetex = level.loadPNG("helppage.png");
 	random = rand() % 3 + 1;
 	random2 = rand() % 3 + 1;
 	random3 = rand() % 3 + 1;
@@ -53,7 +58,7 @@ void Game::Init(){
 		level.Load("lvltest.txt", 1000, 600);
 	}
 	else if (levelcount==1){
-	GameLevelAlgorithm(10, 10);
+	
 		level.Load("lvl2.txt", 1000, 600);
 	}
 	
@@ -75,6 +80,7 @@ void Game::Init(){
 
 	Player.Xpos = level.Playerxpos;//set the players coords on level design
 	Player.Ypos = level.Playerypos;
+	//sets enemy coords
 	for (GameObject a : level.enemiespos)
 	{
 
@@ -116,12 +122,17 @@ void Game::ProcessInput(GLfloat dt){
 		{
 			ResetLevel();
 		}
+		if (this->Keys[GLFW_KEY_G] && !KeysProcessed[GLFW_KEY_G])
+		{
+			GameLevelAlgorithm(10, 10);
+			ResetLevel();
+		}
 		
 		
 	}
-	if(this->State == GAME_MENU)
+	if(this->State == GAME_MENU&&helppage !=true)
 	{
-		if(this->Keys[GLFW_KEY_ENTER])
+		if(this->Keys[GLFW_KEY_ENTER] && !KeysProcessed[GLFW_KEY_ENTER])
 		{
 			if(menucount ==1)
 			{
@@ -133,27 +144,47 @@ void Game::ProcessInput(GLfloat dt){
 				this->State = GAME_ACTIVE;
 				ResetLevel();
 			}
+			if (menucount == 2)
+			{
+				helppage = true;
+				KeysProcessed[GLFW_KEY_ENTER] = GL_TRUE;
+				
+			}
 			
 		}
-		if(this->Keys[GLFW_KEY_UP])
+		if(this->Keys[GLFW_KEY_UP] && !this->KeysProcessed[GLFW_KEY_UP])
 		{
-			menucount--;
 			
-			if(menucount <0)
-			{
-				menucount =1;
+
+				menucount++;
+
+				if (menucount > 2)
+				{
+					menucount = 0;
+				}
+				this->KeysProcessed[GLFW_KEY_UP] = GL_TRUE;// key is not released
 			}
+			
 		}
-		if(this->Keys[GLFW_KEY_DOWN])
+	if (this->Keys[GLFW_KEY_DOWN] &&!this->KeysProcessed[GLFW_KEY_DOWN])
 		{
 			
-			menucount++;
-			if(menucount >1)
-			{
-				menucount = 0;
-			}
+				menucount--;
+				if (menucount < 0)
+				{
+					menucount = 2;
+				}
+				this->KeysProcessed[GLFW_KEY_DOWN] = GL_TRUE;
 		}
 		
+	
+	if (this->State == GAME_MENU&&helppage&& !this->KeysProcessed[GLFW_KEY_ENTER])
+	{
+		if (this->Keys[GLFW_KEY_ENTER])
+		{
+			helppage = false;
+			this->KeysProcessed[GLFW_KEY_ENTER] = GL_TRUE;
+		}
 	}
 }
 void Game::Update(GLfloat dt){
@@ -184,10 +215,16 @@ void Game::Update(GLfloat dt){
 	{
 		Player.xVelocity = -180.0f;
 	}
+	//check play did fall off map
+	if (Player.Ypos < -150)
+	{
+		ResetLevel();
+	}
+		
 	for (BasicEnemy &enem : Enemy.enemies)
 	{
-		 if  (Player.Xpos < enem.Xpos && (Player.Ypos < enem.Ypos+enem.Height&&Player.Ypos>=enem.Ypos)){
-			if (Player.Xpos>enem.Xpos - 192)//enemys range to move towards player
+		 if  (Player.Xpos < enem.Xpos&& Player.Ypos < (enem.Ypos+enem.Height+10)&&Player.Ypos>=(enem.Ypos-40)){
+			 if (Player.Xpos>enem.Xpos - 192)//enemys range to move towards player
 			{
 			
 				enem.Left();
@@ -540,6 +577,9 @@ void Game::drawBackground(){
 	glDisable(GL_BLEND);
 	glPopMatrix();
 
+
+
+
 	
 
 }
@@ -668,13 +708,7 @@ void Game::GameLevelAlgorithm(GLint width, GLint height){
 	tileData[0][1] = 1;
 	tileData[0][2] = 1;
 	
-	//player spawn
-	tileData[4][0] = 3;
-	//goal
-
-
-
-
+	
 	for (int i = 0; i < 30; i++)
 	{
 
@@ -734,7 +768,7 @@ void Game::GameLevelAlgorithm(GLint width, GLint height){
 		
 		
 	}
-	//adding moving platforms
+	//adding enemies and plain tiles
 	for (int i = 0; i < 30; i++)
 	{
 
@@ -748,9 +782,10 @@ void Game::GameLevelAlgorithm(GLint width, GLint height){
 					{
 						tileData[i][j] = 6;
 					}
-					//spawn enemies
+					
 					
 				}
+				//spawn enemies
 				if (tileData[i][j]==0)
 				{
 					//spawn enemy above platform if its a 3 length platform
@@ -759,7 +794,7 @@ void Game::GameLevelAlgorithm(GLint width, GLint height){
 						if (tileData[i - 1][j - 1] == 1 && tileData[i - 1][j] == 1 && tileData[i - 1][j + 1])
 						{
 							//% chance of spawning
-							randomnumber = rand() % 25;
+							randomnumber = rand() % 15;
 							if (randomnumber == 0)
 							{
 
@@ -772,7 +807,12 @@ void Game::GameLevelAlgorithm(GLint width, GLint height){
 		
 	}
 
-	tileData[29][39] = 2;
+	tileData[29][39] = 2;//create the goal and platform underneath
+	tileData[28][39] = 1;
+	tileData[28][38] = 1;
+	tileData[28][37] = 1;
+	//player spawn
+	tileData[4][0] = 3;
 	for (int i = 0; i < 30; i++)
 	{
 
@@ -786,36 +826,166 @@ void Game::GameLevelAlgorithm(GLint width, GLint height){
 }
 
 void Game::drawMenu(){
-	
-	glPushMatrix();
-	glTranslatef(400,400,0.0);
-	glColor4f(1.0, 0.0, 0.0, 0.0);
-	if(menucount==0)
+	//************* DRAW MAIN MENU **************//
+	if (helppage == false)
 	{
-		glColor4f(0.0, 1.0, 0.0, 0.0);
+
+		glBindTexture(GL_TEXTURE_2D, play);
+		glPushMatrix();
+		glTranslatef(400, 400, 0.0);
+		glEnable(GL_BLEND);// enable transparency
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4f(1.0, 0.0, 0.0, 0.0); //set square to transparent
+
+		if (menucount == 0)
+		{
+			glBindTexture(GL_TEXTURE_2D, playselected);
+		}
+
+		glBegin(GL_QUADS);
+		glVertex2f(0, 0);
+		glVertex2f(0 + 0, 100);
+		glVertex2f(0 + 200, 100 + 0.0);
+		glVertex2f(200, 0 + 0);
+		glEnd();
+
+
+		glEnable(GL_TEXTURE_2D);
+		glColor3f(1, 1, 1);//this becomes transparent
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0, 0.0);	glVertex2f(0, 0);
+		glTexCoord2f(0.0, 1.0); glVertex2f(0 + 0, 100);
+		glTexCoord2f(1.0, 1.0); glVertex2f(0 + 200, 100 + 0);
+		glTexCoord2f(1.0, 0.0); glVertex2f(200, 0 + 0);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
+		glPopMatrix();
+
+
+		glBindTexture(GL_TEXTURE_2D, help);
+		glPushMatrix();
+		glTranslatef(400, 250, 0.0);
+		glEnable(GL_BLEND);// enable transparency
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4f(1.0, 0.0, 0.0, 0.0);
+
+		if (menucount == 2)
+		{
+			glBindTexture(GL_TEXTURE_2D, helpselected);
+		} //set square to transparent
+		glBegin(GL_QUADS);
+		glVertex2f(0, 0);
+		glVertex2f(0 + 0, 100);
+		glVertex2f(0 + 200, 100 + 0.0);
+		glVertex2f(200, 0 + 0);
+		glEnd();
+
+
+		glEnable(GL_TEXTURE_2D);
+		glColor3f(1, 1, 1);//this becomes transparent
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0, 0.0);	glVertex2f(0, 0);
+		glTexCoord2f(0.0, 1.0); glVertex2f(0 + 0, 100);
+		glTexCoord2f(1.0, 1.0); glVertex2f(0 + 200, 100 + 0);
+		glTexCoord2f(1.0, 0.0); glVertex2f(200, 0 + 0);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
+		glPopMatrix();
+
+		glBindTexture(GL_TEXTURE_2D, exits);
+		glPushMatrix();
+		glTranslatef(400, 100, 0.0);
+		glEnable(GL_BLEND);// enable transparency
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4f(1.0, 0.0, 0.0, 0.0);
+
+		if (menucount == 1)
+		{
+			glBindTexture(GL_TEXTURE_2D, exitselected);
+		} //set square to transparent
+		glBegin(GL_QUADS);
+		glVertex2f(0, 0);
+		glVertex2f(0 + 0, 100);
+		glVertex2f(0 + 200, 100 + 0.0);
+		glVertex2f(200, 0 + 0);
+		glEnd();
+
+
+		glEnable(GL_TEXTURE_2D);
+		glColor3f(1, 1, 1);//this becomes transparent
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0, 0.0);	glVertex2f(0, 0);
+		glTexCoord2f(0.0, 1.0); glVertex2f(0 + 0, 100);
+		glTexCoord2f(1.0, 1.0); glVertex2f(0 + 200, 100 + 0);
+		glTexCoord2f(1.0, 0.0); glVertex2f(200, 0 + 0);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
+		glPopMatrix();
 	}
-	 //set square to transparent
-	glBegin(GL_QUADS);
-	glVertex2f(0, 0);
-	glVertex2f(0 + 0,100);
-	glVertex2f(0 + 200, 100 + 0.0);
-	glVertex2f(200, 0 + 0);
-	glEnd();
-	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(400,250,0.0);
-	glColor4f(1.0, 0.0, 0.0, 0.0);
-	if(menucount==1)
-	{
-		glColor4f(0.0, 1.0, 0.0, 0.0);
-	} //set square to transparent
-	glBegin(GL_QUADS);
-	glVertex2f(0, 0);
-	glVertex2f(0 + 0,100);
-	glVertex2f(0 + 200, 100 + 0.0);
-	glVertex2f(200, 0 + 0);
-	glEnd();
-	glPopMatrix();
+	else{
+		//***********DRAW HELP PAGE ***************//
+	
+		glPushMatrix();
+		glTranslatef(225, 150, 0.0);
+		glEnable(GL_BLEND);// enable transparency
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4f(1.0, 0.0, 0.0, 0.0);
+
+
+		glBegin(GL_QUADS);
+		glVertex2f(0, 0);
+		glVertex2f(0 + 0, 500);
+		glVertex2f(0 + 500, 400 + 0.0);
+		glVertex2f(400, 0 + 0);
+		glEnd();
+
+		glBindTexture(GL_TEXTURE_2D, helpagetex);
+		glEnable(GL_TEXTURE_2D);
+		glColor3f(1, 1, 1);//this becomes transparent
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0, 0.0);	glVertex2f(0, 0);
+		glTexCoord2f(0.0, 1.0); glVertex2f(0 + 0, 400);
+		glTexCoord2f(1.0, 1.0); glVertex2f(0 + 550, 400 + 0);
+		glTexCoord2f(1.0, 0.0); glVertex2f(550, 0 + 0);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
+		glPopMatrix();
+
+		
+		glPushMatrix();
+		glTranslatef(400, 50, 0.0);
+		glEnable(GL_BLEND);// enable transparency
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4f(1.0, 0.0, 0.0, 0.0);
+
+	    glBindTexture(GL_TEXTURE_2D, back);
+		
+		glBegin(GL_QUADS);
+		glVertex2f(0, 0);
+		glVertex2f(0 + 0, 100);
+		glVertex2f(0 + 200, 100 + 0.0);
+		glVertex2f(200, 0 + 0);
+		glEnd();
+
+
+		glEnable(GL_TEXTURE_2D);
+		glColor3f(1, 1, 1);//this becomes transparent
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0, 0.0);	glVertex2f(0, 0);
+		glTexCoord2f(0.0, 1.0); glVertex2f(0 + 0, 100);
+		glTexCoord2f(1.0, 1.0); glVertex2f(0 + 200, 100 + 0);
+		glTexCoord2f(1.0, 0.0); glVertex2f(200, 0 + 0);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
+		glPopMatrix();
+	}
+
 
 	
 }
+
