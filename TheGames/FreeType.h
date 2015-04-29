@@ -7,7 +7,6 @@
 #include <freetype/ftglyph.h>
 #include <freetype/ftoutln.h>
 #include <freetype/fttrigon.h>
-
 //OpenGL Headers 
 #include <windows.h>		//(the GL headers need it)
 #include <GL/gl.h>

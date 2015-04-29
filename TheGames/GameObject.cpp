@@ -17,6 +17,7 @@ GameObject::GameObject(GLboolean isSolid, GLboolean destroyed, GLint height, GLi
 	xVelocity = 0;
 	yVelocity = 0;
 	remove = false;
+
 	movelength = Ypos;
 }
 GLboolean GameObject::checkCollision(GameObject a, GameObject b){

@@ -61,6 +61,7 @@ void BasicEnemy::Left(){
 	if (xVelocity>(-emaxSpeed))
 	{
 		xVelocity -= 2.2f;
+
 	}
 }
 void BasicEnemy::addEnemy(GLfloat xpos, GLfloat ypos){
