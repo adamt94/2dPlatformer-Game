@@ -61,6 +61,11 @@ void Game::Init(){
 	
 		level.Load("lvl2.txt", 1000, 600);
 	}
+	else if (levelcount > 1)
+	{
+		GameLevelAlgorithm(10, 10);
+		ResetLevel();
+	}
 	
 	
 	
