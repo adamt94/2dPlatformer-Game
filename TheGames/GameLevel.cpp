@@ -1,10 +1,16 @@
 #include "stdafx.h"
 #include "GameLevel.h"
+<<<<<<< HEAD
 #include "Game.h"
 #include "Character.h"
 #include "BasicEnemy.h"
 #include <fstream>
 #include <sstream>
+=======
+#include <fstream>
+#include <sstream>
+
+>>>>>>> 0128f88f96302477a0a4f292e14878866b2a1b76
 #include <math.h>
 using namespace std;
 
@@ -26,7 +32,11 @@ void GameLevel::Load(const char *file, GLuint levelWidth, GLuint levelHeight)
         {
             std::istringstream sstream(line);
             std::vector<GLuint> row;
+<<<<<<< HEAD
             while (sstream >> tileCode) // Read each number with seperated spaces
+=======
+            while (sstream >> tileCode) // Read each word seperated by spaces
+>>>>>>> 0128f88f96302477a0a4f292e14878866b2a1b76
                 row.push_back(tileCode);
             tileData.push_back(row);
         }
@@ -39,6 +49,7 @@ void GameLevel::Load(const char *file, GLuint levelWidth, GLuint levelHeight)
 }
 void GameLevel::Draw(){
 	for (GameObject &tile : this->Bricks){
+<<<<<<< HEAD
 		if (tile.ID==1)
 			glBindTexture(GL_TEXTURE_2D, myTexture);
 		else if (tile.ID == 2)
@@ -59,6 +70,12 @@ void GameLevel::Draw(){
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glPushMatrix();
 			glColor4f(1.0, 0.0, 0.0, 0.0); //set square to transparent
+=======
+		if (!tile.Destroyed)
+		{
+			glPushMatrix();
+			glColor3f(0.0f,1.0f,0.0f);
+>>>>>>> 0128f88f96302477a0a4f292e14878866b2a1b76
 			glBegin(GL_QUADS);
 			glVertex3f(tile.Xpos,tile.Ypos,0.0);
 			glVertex3f(tile.Xpos+tile.Width,tile.Ypos,0.0);
@@ -66,6 +83,7 @@ void GameLevel::Draw(){
 			glVertex3f(tile.Xpos,tile.Ypos+tile.Height,0.0);
 			glEnd();
 			glPopMatrix();
+<<<<<<< HEAD
 			//put texture ontop of square
 			glEnable(GL_TEXTURE_2D);
 			glColor3f(1, 1, 1);//this becomes transparent
@@ -77,6 +95,8 @@ void GameLevel::Draw(){
 			glEnd();
 			glDisable(GL_TEXTURE_2D);
 			glDisable(GL_BLEND);
+=======
+>>>>>>> 0128f88f96302477a0a4f292e14878866b2a1b76
 				
 		
 		}
@@ -102,11 +122,16 @@ void GameLevel::init(std::vector<std::vector<GLuint>> tileData, GLuint levelWidt
 			if (tileData[y][x] == 1) // Solid
 			{
 				GameObject tile(true, false, unit_height, unit_width, unit_width*x, unit_height*y);
+<<<<<<< HEAD
 				tile.ID = 1;//ID for a standard tile
+=======
+				
+>>>>>>> 0128f88f96302477a0a4f292e14878866b2a1b76
 				this->Bricks.push_back(tile);
 				
 				
 			}
+<<<<<<< HEAD
 			else if (tileData[y][x] == 2)	//Goal platform
 			{
 			
@@ -156,6 +181,21 @@ void GameLevel::init(std::vector<std::vector<GLuint>> tileData, GLuint levelWidt
 				tile.ID = 8;
 				tile.movelength = (unit_height*y);
 				this->Bricks.push_back(tile);
+=======
+			else if (tileData[y][x] == 2)	
+			{
+			
+				GameObject tile(true, false, unit_height, unit_width, unit_width*x, unit_height*y);
+				
+				this->Bricks.push_back(tile);
+			
+			}
+			else if (tileData[y][x] > 1)	
+			{
+			
+
+			
+>>>>>>> 0128f88f96302477a0a4f292e14878866b2a1b76
 			}
 		}
 	}

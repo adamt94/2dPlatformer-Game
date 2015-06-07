@@ -36,6 +36,7 @@
     <ClInclude Include="GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="Image_Loading\nvImage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -46,6 +47,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FreeType.h">
+=======
+    <ClInclude Include="LTexture.h">
+>>>>>>> 0128f88f96302477a0a4f292e14878866b2a1b76
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -68,10 +72,14 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="BasicEnemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FreeType.cpp">
+=======
+    <ClCompile Include="LTexture.cpp">
+>>>>>>> 0128f88f96302477a0a4f292e14878866b2a1b76
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

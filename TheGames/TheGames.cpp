@@ -1,10 +1,24 @@
 #include "stdafx.h"
+<<<<<<< HEAD
 #include <glew.h>
 #include <iostream>
 #include <Windows.h>
 #include <GLFW/glfw3.h>
 #include <stdlib.h>
 #include <stdio.h>
+=======
+
+#include <iostream>
+
+#include <Windows.h>
+#include "LTexture.h"
+#include "il.h"
+#include "ilu.h"
+#include <GLFW/glfw3.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+>>>>>>> 0128f88f96302477a0a4f292e14878866b2a1b76
 #include <gl/glu.h>
 #include <gl/GL.h>
 
@@ -54,6 +68,21 @@ int main(void)
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
+<<<<<<< HEAD
+=======
+	//Initialize DevIL
+	ilInit();
+	
+	ilClearColour(255, 255, 255, 000);
+
+	//Check for error
+	ILenum ilError = ilGetError();
+	if (ilError != IL_NO_ERROR)
+	{
+		printf("Error initializing DevIL! %s\n", iluErrorString(ilError));
+		return false;
+	}
+>>>>>>> 0128f88f96302477a0a4f292e14878866b2a1b76
 	glfwMakeContextCurrent(window);// focus on window
 	glfwSwapInterval(1);
 	glfwSetKeyCallback(window, key_callback);

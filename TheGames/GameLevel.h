@@ -1,4 +1,5 @@
 #include <vector>
+<<<<<<< HEAD
 #include "GameObject.h"
 
 class GameLevel : public GameObject
@@ -11,6 +12,17 @@ public:
 	std::vector<GameObject> enemiespos; //contain all the positions of the enemys from the txt file
     // Constructor
 	GameObject player;//object for player starting position on level
+=======
+#include <GLFW/glfw3.h>
+#include "GameObject.h"
+
+class GameLevel
+{
+public:
+    // Level state
+    std::vector<GameObject> Bricks;
+    // Constructor
+>>>>>>> 0128f88f96302477a0a4f292e14878866b2a1b76
     GameLevel() { }
     // Loads level from file
     void      Load(const char *file, GLuint levelWidth, GLuint levelHeight);

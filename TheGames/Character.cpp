@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+<<<<<<< HEAD
 
 
 
@@ -19,10 +20,33 @@ Character::Character(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	Score = 0;
 
+=======
+#include <iostream>
+
+#include "LTexture.h"
+#include "Character.h"
+
+using namespace std;
+
+
+
+LTexture t;
+Character::Character(GLboolean IsSolid, GLboolean Destroyed, GLint height, GLint width, GLfloat xpos, GLfloat ypos)
+	:GameObject(IsSolid, Destroyed, height, width, xpos, ypos)
+{
+	Xpos = 70.0f;
+	Ypos = 40.0f;
+	xVelocity = 0.0f; 
+	yVelocity = 0.0f;
+
+	jump = false;
+	t.loadTextureFromFile("characterstandingpos.png");
+>>>>>>> 0128f88f96302477a0a4f292e14878866b2a1b76
 
 	
 	
 }
+<<<<<<< HEAD
 
 void Character::draw(){
 	if (playerleft == false){ 
@@ -96,6 +120,37 @@ void Character::Up(GLfloat dt){
 	
 
 	
+=======
+void Character::draw(){
+	//
+	//glPushMatrix();
+	//glColor3f(1.0, 0.0, 0.0);
+	//	glBegin(GL_QUADS);
+	//		glVertex3f(Xpos,Ypos,0.0);
+	//		glVertex3f(Xpos+Width,Ypos,0.0);
+	//		glVertex3f(Xpos+Width,Ypos+Height,0.0);
+	//		glVertex3f(Xpos,Ypos+Height,0.0);
+	//	glEnd();
+	//glPopMatrix();
+	t.render(Xpos,Ypos,Width,Height);
+	
+	
+	
+}
+void Character::Up(){
+	//jump again when reaches ground
+	if(jump)
+	{
+	   jump = false;
+	
+	//increases speed until max jump height
+	  while(yVelocity<maxJump)
+	  {
+		
+	     yVelocity+=50.2f;
+      }
+	}
+>>>>>>> 0128f88f96302477a0a4f292e14878866b2a1b76
 	
 }
 void Character::Down(){
@@ -108,6 +163,7 @@ void Character::Down(){
 	
 }
 void Character::Right(){
+<<<<<<< HEAD
 	playerleft = false;
 	//increases speed until max
 	if(xVelocity<maxSpeed)
@@ -128,3 +184,20 @@ void Character::Left(){
 }
 
 
+=======
+	//increases speed until max
+	if(xVelocity<maxSpeed)
+	{
+	  xVelocity+=2.2f;
+	}
+	
+}
+void Character::Left(){
+	//increases speed until max
+	if(xVelocity>(-maxSpeed))
+	{
+	  xVelocity-=2.2f;
+	}
+	
+}
+>>>>>>> 0128f88f96302477a0a4f292e14878866b2a1b76
